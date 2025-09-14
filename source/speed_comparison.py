@@ -5,6 +5,7 @@ from random import randint
 import secrets
 import time
 import numpy as np
+from numpy.lib.stride_tricks import sliding_window_view
 
 
 def shannon_entropy(seq: [int]):
@@ -46,19 +47,14 @@ def xorshift(seed, n) -> [int]:
 
 def rel_ord(sequence: [int], w: int) -> [[int]]:
     """
+    FASTEST
     Generates all relative orderings for a sequence (not Lehmer codes)
     param w (int): window length
     """
-    res = []
-    for j in range(len(sequence) - w + 1):
-        sub = sequence[j:(j + w)]
-        sorted_idx = sorted(range(w), key=lambda i: sub[i])
-        # print(sorted_idx)
-        ranks = [0] * w
-        for rank, idx in enumerate(sorted_idx):
-            ranks[idx] = rank
-        res.append(ranks)
-    return res
+    arr = np.asarray(sequence)
+    windows = sliding_window_view(arr, w)
+    ranks = np.argsort(np.argsort(windows, axis=1), axis=1)
+    return ranks.tolist()
 
 
 def lehmer_from_ranks(rank_lists: [[int]]) -> [int]:
@@ -91,7 +87,7 @@ def plot_distribution(data, title="Distribution of values", bins=24):
     plt.show()
 
 
-def test():
+def comparison():
     window = 4
     a_lcg = lcg(123456, 2 ** 16)
     a_xorshift = xorshift(123456, 2 ** 16)
@@ -167,5 +163,6 @@ def speed_test():
 
 # rel_ord([5,4,3,1,2,9,8,12,35,15],4)
 # print(lehmer_from_ranks([[2,1,0,3],[5,3,0,1,2,4]]))
-# test()
-speed_test()
+# comparison()
+if __name__ == "__main__":
+    speed_test()
