@@ -55,21 +55,22 @@ def rel_ord(sequence: [int], w: int) -> [[int]]:
     arr = np.asarray(sequence)
     windows = sliding_window_view(arr, w)
     ranks = np.argsort(np.argsort(windows, axis=1), axis=1)
-    return ranks.tolist()
+    return ranks
 
 
 def lehmer_from_ranks(rank_lists: [[int]]) -> [int]:
-    lehmer_codes = []
+    n = len(rank_lists[0])
+    factorials = [math.factorial(n - i - 1) for i in range(n)]
+    results = []
     for ranks in rank_lists:
         n = len(ranks)
         code = 0
         for i in range(n):
             # below calculates normal lehmer code
             smaller = sum(1 for j in range(i + 1, n) if ranks[j] < ranks[i])
-            # turns lehmer code into integer (lexicographic index)
-            code += smaller * math.factorial(n - i - 1)
-        lehmer_codes.append(code)
-    return lehmer_codes
+            code += smaller * factorials[i]
+        results.append(code)
+    return results
 
 
 def lcg_lh(seed: int, n: int, w: int, a=1664525, c=1013904223, m=2 ** 32) -> [int]:
