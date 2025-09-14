@@ -49,6 +49,7 @@ def rel_ord(sequence: [int], w: int) -> [[int]]:
     """
     FASTEST
     Generates all relative orderings for a sequence (not Lehmer codes)
+    param sequence ([int]): the plain PRNG sequence
     param w (int): window length
     """
     arr = np.asarray(sequence)
