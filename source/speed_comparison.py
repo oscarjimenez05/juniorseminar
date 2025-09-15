@@ -75,7 +75,7 @@ def lehmer_from_ranks(rank_lists: [[int]]) -> [int]:
 
 def lcg_lh(seed: int, n: int, w: int, a=1664525, c=1013904223, m=2 ** 32) -> [int]:
     """
-    Non-overlapping lehmer code sliding window on top of LCG
+    Overlapping lehmer code sliding window on top of LCG
     """
     return lehmer_from_ranks(rel_ord(lcg(seed, n + w - 1, a, c, m), w))
 
@@ -110,6 +110,17 @@ def comparison():
     plot_distribution(lehmer_mersenne)
 
 
+def missing_from_range(lst: [int], start: int, end: int) -> [int]:
+    """
+    :param lst: a list of numbers
+    :param start: start value (inclusive)
+    :param end: end value (inclusive)
+    :return: a list of numbers not present in the range
+    """
+    full_range = set(range(start, end + 1))
+    return sorted(full_range - set(lst))
+
+
 def speed_test():
     reps = 100000
     window_range = 6
@@ -125,7 +136,7 @@ def speed_test():
     assert len(a_csprng) == reps
 
     # LCG
-    seed = 123456789
+    seed = 1234567899
     start_lcg = time.perf_counter()
     a_lcg = lcg(seed, reps, m=max_exclusive)
     end_lcg = time.perf_counter()
@@ -155,6 +166,11 @@ def speed_test():
     print("LCG    MIN and MAX: " + str(int(a_lcg.min())) + ", " + str(int(a_lcg.max())))
     print("LCH_LH MIN and MAX: " + str(int(a_lcg_lh.min())) + ", " + str(int(a_lcg_lh.max())))
     print("MRS_TW MIN and MAX: " + str(int(a_mrs_tw.min())) + ", " + str(int(a_mrs_tw.max())))
+    print("-----------------------")
+    print("Not present in CSPRNG: " + str(missing_from_range(a_csprng, 0, max_exclusive-1)))
+    print("Not present in LCG   : " + str(missing_from_range(a_lcg, 0, max_exclusive-1)))
+    print("Not present in LCG_LH: " + str(missing_from_range(a_lcg_lh, 0, max_exclusive-1)))
+    print("Not present in MRS_TW: " + str(missing_from_range(a_mrs_tw, 0, max_exclusive-1)))
     print("-----------------------")
     print("Expec. MEAN: " + str((max_exclusive - 1) / 2))
     print("CSPRNG MEAN: " + str(a_csprng.mean()))
