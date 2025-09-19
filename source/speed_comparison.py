@@ -1,3 +1,4 @@
+import random
 from collections import Counter
 import math
 import matplotlib.pyplot as plt
@@ -6,6 +7,7 @@ import secrets
 import time
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
+from typing import Tuple
 
 
 def shannon_entropy(seq: [int]):
@@ -121,9 +123,20 @@ def missing_from_range(lst: [int], start: int, end: int) -> [int]:
     return sorted(full_range - set(lst))
 
 
+def display_arrays(data: [Tuple[str, list]]) -> None:
+    """
+    :param data: a list of tuples of the form (title, array)
+    :return: None
+    """
+    for title, array in data:
+        plt.plot(array, label=title)
+        plt.show()
+
+
 def speed_test():
-    reps = 100000
+    reps = 100
     window_range = 6
+    seed = 200
 
     max_exclusive = math.factorial(window_range)
 
@@ -136,9 +149,8 @@ def speed_test():
     assert len(a_csprng) == reps
 
     # LCG
-    seed = 1234567899
     start_lcg = time.perf_counter()
-    a_lcg = lcg(seed, reps, m=max_exclusive)
+    a_lcg = lcg(seed, reps, a=121, c=1, m=max_exclusive)
     end_lcg = time.perf_counter()
     assert len(a_lcg) == reps
 
@@ -150,6 +162,7 @@ def speed_test():
     assert len(a_lcg_lh) == reps
 
     # MRS_TW
+    random.seed = seed
     a_mrs_tw = np.empty(reps)
     start_mrs_tw = time.perf_counter()
     for i in range(reps):
