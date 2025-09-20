@@ -103,11 +103,11 @@ def speed_test():
 def compare_cython():
     reps = 1000000
     start_c = time.perf_counter()
-    c_lcg_lh.lcg(135, reps, 121, 1, 720)
+    c_lcg_lh.lcg_lh(135, reps, 5, 121, 1, 720)
     end_c = time.perf_counter()
 
     start_p = time.perf_counter()
-    lcg(135, reps, 121, 1, 720)
+    lcg_lh(135, reps, 5, 121, 1, 720)
     end_p = time.perf_counter()
     print(end_c - start_c)
     print(end_p - start_p)
@@ -117,5 +117,5 @@ def compare_cython():
 # print(lehmer_from_ranks([[2,1,0,3],[5,3,0,1,2,4]]))
 # comparison()
 if __name__ == "__main__":
-    speed_test()
+    #speed_test()
     compare_cython()
