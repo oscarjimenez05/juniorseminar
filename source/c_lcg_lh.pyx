@@ -11,9 +11,6 @@ import cython
 
 np.import_array()
 
-# ===================================================================
-# FUNCTION 1: Linear Congruential Generator (from before)
-# ===================================================================
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef np.ndarray[np.int64_t, ndim=1] lcg(long long seed, int n,
@@ -87,9 +84,6 @@ def _lehmer_from_ranks(np.ndarray[np.int64_t, ndim=2] rank_lists):
 
     return results
 
-# ===================================================================
-# FUNCTION 4: The Main Public-Facing Function
-# ===================================================================
 cpdef lcg_lh(long long seed, int n, int w, long long a=1664525, long long c=1013904223, long long m=2**32):
     """
     Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
