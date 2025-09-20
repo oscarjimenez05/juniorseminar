@@ -14,7 +14,7 @@ np.import_array()
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cpdef np.ndarray[np.int64_t, ndim=1] lcg(long long seed, int n,
-                                          long long a=1664525, long long c=1013904223, long long m=2**32):
+                                          long long a=1664525, long long c=1013904223, long long m=4294967296):
     """
     Cython implementation of a Linear Congruential Generator.
     :param seed: (unsigned int): initial seed
@@ -84,10 +84,11 @@ def _lehmer_from_ranks(np.ndarray[np.int64_t, ndim=2] rank_lists):
 
     return results
 
-cpdef lcg_lh(long long seed, int n, int w, long long a=1664525, long long c=1013904223, long long m=2**32):
+cpdef lcg_lh(long long seed, int n, int w, long long a=1664525, long long c=1013904223, long long m=4294967296 ):
     """
     Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
     All intermediate steps are handled efficiently within Cython.
+    Default underlying LCG is standard [0,2^32-1]
     """
     cdef np.ndarray[np.int64_t, ndim=1] base_sequence = lcg(seed, n + w - 1, a, c, m)
 
