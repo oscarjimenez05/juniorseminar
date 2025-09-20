@@ -41,7 +41,8 @@ def display_arrays(data: [Tuple[str, list]], max_exclusive: int) -> None:
     :return: None
     """
     for title, array in data:
-        plt.plot(array, label=title)
+        plt.plot(array)
+        plt.title(title)
         plt.show()
 
     print("-----------------------")
@@ -57,9 +58,9 @@ def display_arrays(data: [Tuple[str, list]], max_exclusive: int) -> None:
 
 
 def speed_test():
-    reps = 100
+    reps = 100000
     window_range = 6
-    seed = 200
+    seed = 123456789
 
     max_exclusive = math.factorial(window_range)
 
@@ -71,13 +72,13 @@ def speed_test():
 
     # LCG
     start_lcg = time.perf_counter()
-    a_lcg = lcg(seed, reps, a=121, c=1, m=max_exclusive)
+    a_lcg = c_lcg_lh.lcg(seed, reps, a=121, c=1, m=max_exclusive)
     end_lcg = time.perf_counter()
     assert len(a_lcg) == reps
 
     # LCG_LH
     start_lcg_lh = time.perf_counter()
-    a_lcg_lh = lcg_lh(seed, reps, window_range)
+    a_lcg_lh = c_lcg_lh.lcg_lh(seed, reps, window_range)
     end_lcg_lh = time.perf_counter()
     a_lcg_lh = np.array(a_lcg_lh)
     assert len(a_lcg_lh) == reps
@@ -94,7 +95,7 @@ def speed_test():
     print("Average time for MRW_TW: " + str((end_mrs_tw - start_mrs_tw) / reps))
 
     display_arrays([("CSPRNG", a_csprng),
-                    ("LCG", a_lcg),
+                    ("LCG   ", a_lcg),
                     ("LCG_LH", a_lcg_lh),
                     ("MRS_TW", a_mrs_tw)],
                    max_exclusive)
@@ -121,5 +122,5 @@ def compare_cython():
 # print(lehmer_from_ranks([[2,1,0,3],[5,3,0,1,2,4]]))
 # comparison()
 if __name__ == "__main__":
-    #speed_test()
-    compare_cython()
+    speed_test()
+    # compare_cython()
