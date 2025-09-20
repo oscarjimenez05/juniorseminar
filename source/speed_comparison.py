@@ -101,16 +101,20 @@ def speed_test():
 
 
 def compare_cython():
-    reps = 1000000
+    reps = 100000
     start_c = time.perf_counter()
-    c_lcg_lh.lcg_lh(135, reps, 5, 121, 1, 720)
+    a_c = c_lcg_lh.lcg_lh(135, reps, 5, 121, 1, 720)
     end_c = time.perf_counter()
 
     start_p = time.perf_counter()
-    lcg_lh(135, reps, 5, 121, 1, 720)
+    a_p = lcg_lh(135, reps, 5, 121, 1, 720)
     end_p = time.perf_counter()
-    print(end_c - start_c)
-    print(end_p - start_p)
+
+    time_c = end_c - start_c
+    time_p = end_p - start_p
+    print(time_c)
+    print(time_p)
+    print(time_p/time_c)
 
 
 # rel_ord([5,4,3,1,2,9,8,12,35,15],4)
