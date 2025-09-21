@@ -9,7 +9,7 @@ import statsmodels.api as sm
 def large_lcg_vs_lcg_lh():
     seed = 701
     reps = 100000
-    window = 7
+    window = 6
 
     max_exclusive = math.factorial(window)
 
@@ -38,11 +38,11 @@ def large_lcg_vs_lcg_lh():
 
     # serial correlation test
     print("-----------------------")
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, 10], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, max_exclusive], return_df=True)
     print(ljung_box_results)
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, 10], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, max_exclusive], return_df=True)
     print(ljung_box_results)
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh, lags=[1, window, 10], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh, lags=[1, window, max_exclusive], return_df=True)
     print(ljung_box_results)
 
 
