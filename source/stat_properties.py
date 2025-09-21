@@ -8,12 +8,12 @@ import statsmodels.api as sm
 
 def large_lcg_vs_lcg_lh():
     seed = 701
-    reps = 1000000
-    window = 6
+    reps = 100000
+    window = 7
 
     max_exclusive = math.factorial(window)
 
-    a_lcg = c_lcg_lh.lcg(seed, reps, a=121, c=1, m=max_exclusive)
+    a_lcg = c_lcg_lh.lcg(seed, reps, a=421, c=1, m=max_exclusive)
     a_large_lcg = c_lcg_lh.lcg(seed, reps)
     a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, a_large_lcg)))
     a_lcg_lh = np.array(c_lcg_lh.lcg_lh(seed, reps, window))
@@ -35,6 +35,15 @@ def large_lcg_vs_lcg_lh():
     counts, _ = np.histogram(a_lcg_lh, bins=max_exclusive, range=(0, max_exclusive))
     chi2, p = chisquare(counts)
     print(f"LCG_LH Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
+
+    # serial correlation test
+    print("-----------------------")
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, 10], return_df=True)
+    print(ljung_box_results)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, 10], return_df=True)
+    print(ljung_box_results)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh, lags=[1, window, 10], return_df=True)
+    print(ljung_box_results)
 
 
 def missing_from_range(lst: [int], start: int, end: int) -> [int]:
