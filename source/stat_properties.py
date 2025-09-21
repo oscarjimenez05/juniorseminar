@@ -2,19 +2,39 @@ from typing import Tuple
 import matplotlib.pyplot as plt
 from generators import *
 import c_lcg_lh
+from scipy.stats import chisquare
+import statsmodels.api as sm
 
 
 def large_lcg_vs_lcg_lh():
-    seed = 12345789
-    reps = 10000000
-    window = 9
+    seed = 701
+    reps = 1000000
+    window = 6
 
     max_exclusive = math.factorial(window)
 
+    a_lcg = c_lcg_lh.lcg(seed, reps, a=121, c=1, m=max_exclusive)
     a_large_lcg = c_lcg_lh.lcg(seed, reps)
     a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, a_large_lcg)))
     a_lcg_lh = np.array(c_lcg_lh.lcg_lh(seed, reps, window))
-    display_arrays([("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh)], max_exclusive)
+    display_arrays([("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh)], max_exclusive)
+
+    # Plot histograms
+    plot_distribution(a_lcg, "LCG", 2*9*5)
+    plot_distribution(a_lcg_mod, "Lm_LCG", 2*9*5)
+    plot_distribution(a_lcg_lh, "LCG_LH", 2*9*5)
+
+    # chisq test
+    print("-----------------------")
+    counts, _ = np.histogram(a_lcg, bins=max_exclusive, range=(0, max_exclusive))
+    chi2, p = chisquare(counts)
+    print(f"LCG    Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
+    counts, _ = np.histogram(a_lcg_mod, bins=max_exclusive, range=(0, max_exclusive))
+    chi2, p = chisquare(counts)
+    print(f"Lm_LCG Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
+    counts, _ = np.histogram(a_lcg_lh, bins=max_exclusive, range=(0, max_exclusive))
+    chi2, p = chisquare(counts)
+    print(f"LCG_LH Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
 
 
 def missing_from_range(lst: [int], start: int, end: int) -> [int]:
@@ -55,12 +75,11 @@ def display_arrays(data: [Tuple[str, list]], max_exclusive: int, plot: bool = Fa
         print(f"{title} MEAN: " + str(mean) + f" (diff. {(exp_mean - mean):.5f})")
 
 
-def plot_distribution(data, title="Distribution of values", bins=24):
-    plt.hist(data, bins=bins, range=(0, 24), align="left", rwidth=0.9, color="skyblue", edgecolor="black")
-    plt.xlabel("Lehmer code values")
+def plot_distribution(data, title="Distribution of Values", bins=24):
+    plt.hist(data, bins=bins, align="left", rwidth=0.9, color="skyblue", edgecolor="black")
+    plt.xlabel("Generated Values")
     plt.ylabel("Frequency")
     plt.title(title)
-    plt.xticks(range(24))
     plt.show()
 
 
