@@ -59,21 +59,27 @@ def speed_test():
 
 def compare_cython_speed():
     reps = 100000
-    start_c = time.perf_counter()
-    c_lcg_lh.lcg_lh(135, reps, 5, 121, 1, 720)
-    end_c = time.perf_counter()
+    start_c_old = time.perf_counter()
+    #c_lcg_lh.lcg_lh(135, reps, 5, 121, 1, 720)
+    end_c_old = time.perf_counter()
+
+    start_c_new = time.perf_counter()
+    c_lcg_lh.lcg_lh64(135, reps, 5)
+    end_c_new = time.perf_counter()
 
     start_p = time.perf_counter()
     lcg_lh(135, reps, 5, 121, 1, 720)
     end_p = time.perf_counter()
 
-    time_c = end_c - start_c
+    time_c_new = end_c_new - start_c_new
+    time_c_old = end_c_old - start_c_old
     time_p = end_p - start_p
-    print(time_c)
+    print(time_c_new)
+    print(time_c_old)
     print(time_p)
-    print(time_p/time_c)
+    print(time_p/time_c_old)
 
 
 if __name__ == "__main__":
-    speed_test()
-    # compare_cython_speed()
+    # speed_test()
+    compare_cython_speed()
