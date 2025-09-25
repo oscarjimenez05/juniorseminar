@@ -121,8 +121,7 @@ cpdef lcg_lh(unsigned long long seed, int n, int w, unsigned long long a=1664525
 
     return lehmer_codes
 
-
-cpdef lcg_lh64(unsigned long long seed, int n, int w):
+cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w):
     """
     Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
     All intermediate steps are handled efficiently within Cython.
@@ -130,7 +129,7 @@ cpdef lcg_lh64(unsigned long long seed, int n, int w):
     """
     cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, n + w - 1)
 
-    cdef np.ndarray[np.intp_t, ndim=1] lehmer_codes = (
+    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = (
         _lehmer_from_ranks(np.lib.stride_tricks.sliding_window_view(base_sequence, w)))
 
     return lehmer_codes
