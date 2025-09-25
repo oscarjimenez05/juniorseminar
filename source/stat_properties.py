@@ -62,7 +62,7 @@ def serial_correlation_comparison():
     max_exclusive = math.factorial(window)
 
     a_lcg = c_lcg_lh.lcg(seed, reps, a=421, c=1, m=max_exclusive)
-    a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, c_lcg_lh.lcg(seed, reps))))
+    a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, c_lcg_lh.lcg64(seed, reps))))
     a_lcg_lh64 = np.array(c_lcg_lh.lcg_lh64(seed, reps, window, window))
     a_csprng = csprng(reps, max_exclusive)
     a_mrs_tw = mrs_tw(seed, reps, max_exclusive)
@@ -126,5 +126,5 @@ def plot_distribution(data, title="Distribution of Values", bins=24):
 
 
 if __name__ == "__main__":
-    # large_lcg_vs_lcg_lh()
-    serial_correlation_comparison()
+    large_lcg_vs_lcg_lh()
+    #serial_correlation_comparison()
