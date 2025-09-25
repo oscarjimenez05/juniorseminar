@@ -114,7 +114,7 @@ cpdef lcg_lh(unsigned long long seed, int n, int w, unsigned long long a=1664525
     """
     cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg(seed, n + w - 1, a, c, m)
 
-    cdef np.ndarray[np.intp_t, ndim=2] ranks = _rel_ord(base_sequence, w)
+    cdef np.ndarray[np.uint64_t, ndim=2] ranks = _rel_ord(base_sequence, w)
     cdef np.ndarray[np.uint64_t, ndim=2] ranks_uint64 = ranks.astype(np.uint64)
 
     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(ranks_uint64)

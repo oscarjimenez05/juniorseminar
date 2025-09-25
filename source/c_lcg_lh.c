@@ -3259,7 +3259,6 @@ static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
 /* #### Code section: typeinfo ### */
 static const __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_uint64_t = { "uint64_t", NULL, sizeof(__pyx_t_5numpy_uint64_t), { 0 }, 0, __PYX_IS_UNSIGNED(__pyx_t_5numpy_uint64_t) ? 'U' : 'I', __PYX_IS_UNSIGNED(__pyx_t_5numpy_uint64_t), 0 };
-static const __Pyx_TypeInfo __Pyx_TypeInfo_nn___pyx_t_5numpy_intp_t = { "intp_t", NULL, sizeof(__pyx_t_5numpy_intp_t), { 0 }, 0, __PYX_IS_UNSIGNED(__pyx_t_5numpy_intp_t) ? 'U' : 'I', __PYX_IS_UNSIGNED(__pyx_t_5numpy_intp_t), 0 };
 /* #### Code section: before_global_var ### */
 #define __Pyx_MODULE_NAME "c_lcg_lh"
 extern int __pyx_module_is_main_c_lcg_lh;
@@ -3421,8 +3420,8 @@ static const char __pyx_k_Index_out_of_bounds_axis_d[] = "Index out of bounds (a
 static const char __pyx_k_Step_may_not_be_zero_axis_d[] = "Step may not be zero (axis %d)";
 static const char __pyx_k_itemsize_0_for_cython_array[] = "itemsize <= 0 for cython.array";
 static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate array data.";
+static const char __pyx_k_I_C1_AV2Rr_3cQTTU_1_8_WARq_88J[] = "\320\000I\310\021\330\"C\3001\360\014\000\005:\270\023\270A\270V\3002\300R\300r\310\022\3103\310c\320QT\320TU\340\0041\260\030\270\021\270/\310\021\330\0048\270\005\270W\300A\300R\300q\340\0048\3208J\310!\3101\340\004\013\2101";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
-static const char __pyx_k_I_C1_AV2Rr_3cQTTU_xq_q_8_WARq_8[] = "\320\000I\310\021\330\"C\3001\360\014\000\005:\270\023\270A\270V\3002\300R\300r\310\022\3103\310c\320QT\320TU\340\004/\250x\260q\270\017\300q\330\0048\270\005\270W\300A\300R\300q\340\0048\3208J\310!\3101\340\004\013\2101";
 static const char __pyx_k_V1A_6_42V1M_rQR_vQb_t1_U_1_5_Ja[] = "\200\001\360\010\000\005\034\230:\240V\2501\250A\330\004\021\220\032\2306\240\021\240!\360\006\000\0054\2602\260V\2701\270M\310\026\310r\320QR\360\006\000\005+\320*?\270v\300Q\300b\310\002\310!\330\004\007\200t\2101\330\010\t\360\006\000\005\t\210\005\210U\220!\2201\330\010\022\220!\2205\230\004\230J\240a\240r\250\022\2502\250R\250q\360\006\000\005=\270B\320>P\320PQ\320QR\330\004*\250!\360\014\000\005\t\210\005\210U\220!\2201\330\010\017\210q\330\010\014\210E\220\025\220a\220q\330\014\026\220a\340\014\020\220\005\220U\230!\2302\230R\230s\240!\330\020\023\220:\230Q\230c\240\023\240B\240j\260\001\260\023\260A\330\024\037\230q\330\014\024\220H\230B\230j\250\001\250\021\330\010\017\210q\220\005\220Q\340\004\010\210\001\210\021\340\004\013\2101";
 static const char __pyx_k_numpy_core_multiarray_failed_to[] = "numpy.core.multiarray failed to import";
 static const char __pyx_k_All_dimensions_preceding_dimensi[] = "All dimensions preceding dimension %d must be indexed and not sliced";
@@ -20161,7 +20160,7 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh(unsigned PY_LONG_LONG __pyx_v_seed, in
  *     """
  *     cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg(seed, n + w - 1, a, c, m)             # <<<<<<<<<<<<<<
  * 
- *     cdef np.ndarray[np.intp_t, ndim=2] ranks = _rel_ord(base_sequence, w)
+ *     cdef np.ndarray[np.uint64_t, ndim=2] ranks = _rel_ord(base_sequence, w)
 */
   __pyx_t_2.__pyx_n = 3;
   __pyx_t_2.a = __pyx_v_a;
@@ -20183,7 +20182,7 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh(unsigned PY_LONG_LONG __pyx_v_seed, in
   /* "c_lcg_lh.pyx":117
  *     cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg(seed, n + w - 1, a, c, m)
  * 
- *     cdef np.ndarray[np.intp_t, ndim=2] ranks = _rel_ord(base_sequence, w)             # <<<<<<<<<<<<<<
+ *     cdef np.ndarray[np.uint64_t, ndim=2] ranks = _rel_ord(base_sequence, w)             # <<<<<<<<<<<<<<
  *     cdef np.ndarray[np.uint64_t, ndim=2] ranks_uint64 = ranks.astype(np.uint64)
  * 
 */
@@ -20191,7 +20190,7 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh(unsigned PY_LONG_LONG __pyx_v_seed, in
   __Pyx_GOTREF(__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_ranks.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_5numpy_intp_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_ranks.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_5numpy_uint64_t, PyBUF_FORMAT| PyBUF_STRIDES, 2, 0, __pyx_stack) == -1)) {
       __pyx_v_ranks = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_ranks.rcbuffer->pybuffer.buf = NULL;
       __PYX_ERR(0, 117, __pyx_L1_error)
     } else {__pyx_pybuffernd_ranks.diminfo[0].strides = __pyx_pybuffernd_ranks.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_ranks.diminfo[0].shape = __pyx_pybuffernd_ranks.rcbuffer->pybuffer.shape[0]; __pyx_pybuffernd_ranks.diminfo[1].strides = __pyx_pybuffernd_ranks.rcbuffer->pybuffer.strides[1]; __pyx_pybuffernd_ranks.diminfo[1].shape = __pyx_pybuffernd_ranks.rcbuffer->pybuffer.shape[1];
@@ -20202,7 +20201,7 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh(unsigned PY_LONG_LONG __pyx_v_seed, in
 
   /* "c_lcg_lh.pyx":118
  * 
- *     cdef np.ndarray[np.intp_t, ndim=2] ranks = _rel_ord(base_sequence, w)
+ *     cdef np.ndarray[np.uint64_t, ndim=2] ranks = _rel_ord(base_sequence, w)
  *     cdef np.ndarray[np.uint64_t, ndim=2] ranks_uint64 = ranks.astype(np.uint64)             # <<<<<<<<<<<<<<
  * 
  *     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(ranks_uint64)
@@ -23365,7 +23364,7 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
   {
     const __Pyx_PyCode_New_function_description descr = {6, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 108, 78};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_seed, __pyx_mstate->__pyx_n_u_n, __pyx_mstate->__pyx_n_u_w, __pyx_mstate->__pyx_n_u_a, __pyx_mstate->__pyx_n_u_c, __pyx_mstate->__pyx_n_u_m};
-    __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_c_lcg_lh_pyx, __pyx_mstate->__pyx_n_u_lcg_lh, __pyx_k_I_C1_AV2Rr_3cQTTU_xq_q_8_WARq_8, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
+    __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_c_lcg_lh_pyx, __pyx_mstate->__pyx_n_u_lcg_lh, __pyx_k_I_C1_AV2Rr_3cQTTU_1_8_WARq_88J, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }
   {
     const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 124, 52};
