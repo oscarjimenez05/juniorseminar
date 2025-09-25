@@ -29,13 +29,13 @@ def speed_test():
 
     # LCG
     start_lcg = time.perf_counter()
-    a_lcg = c_lcg_lh.lcg(seed, reps, a=121, c=1, m=max_exclusive)
+    a_lcg = c_lcg_lh.lcg(seed, reps, a=421, c=1, m=max_exclusive)
     end_lcg = time.perf_counter()
     assert len(a_lcg) == reps
 
     # LCG_LH
     start_lcg_lh = time.perf_counter()
-    a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range)
+    a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range, window_range) # fully non-overlapping
     end_lcg_lh = time.perf_counter()
     a_lcg_lh = np.array(a_lcg_lh)
     assert len(a_lcg_lh) == reps
@@ -107,6 +107,6 @@ def compare_overlap_speed():
 
 
 if __name__ == "__main__":
-    # speed_test()
+    speed_test()
     # compare_cython_speed()
-    compare_overlap_speed()
+    # compare_overlap_speed()
