@@ -13,8 +13,10 @@ np.import_array()
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
-cpdef np.ndarray[np.int64_t, ndim=1] lcg(long long seed, int n,
-                                          long long a=1664525, long long c=1013904223, long long m=4294967296):
+cpdef np.ndarray[np.uint64_t, ndim=1] lcg(unsigned long long seed, int n,
+                                          unsigned long long a=1664525,
+                                          unsigned long long c=1013904223,
+                                          unsigned long long m=4294967296):
     """
     Cython implementation of a Linear Congruential Generator.
     :param seed: (unsigned int): initial seed
@@ -23,9 +25,9 @@ cpdef np.ndarray[np.int64_t, ndim=1] lcg(long long seed, int n,
     :param c: (unsigned int): increment
     :param m: (long long): modulus
     """
-    cdef np.ndarray[np.int64_t, ndim=1] result = np.empty(n, dtype=np.int64)
+    cdef np.ndarray[np.uint64_t, ndim=1] result = np.empty(n, dtype=np.uint64)
 
-    cdef long long x = seed
+    cdef unsigned long long x = seed
     cdef int i
     for i in range(n):
         x = (a * x + c) % m
@@ -50,18 +52,18 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg64(unsigned long long seed, int n):
         result[i] = x
     return result
 
-def _rel_ord(np.ndarray[np.int64_t, ndim=1] sequence, int w):
+cdef np.ndarray[np.uint64_t, ndim=2]_rel_ord(np.ndarray[np.uint64_t, ndim=1] sequence, int w):
     """
     Cython wrapper for generating relative orderings.
     """
     windows = np.lib.stride_tricks.sliding_window_view(sequence, w)
     ranks = np.argsort(np.argsort(windows, axis=1), axis=1)
-    return ranks
+    return ranks.astype(np.uint64)
 
 
-@cython.boundscheck(False)
-@cython.wraparound(False)
-def _lehmer_from_ranks(np.ndarray[np.int64_t, ndim=2] rank_lists):
+#@cython.boundscheck(False)
+#@cython.wraparound(False)
+def _lehmer_from_ranks(np.ndarray[np.uint64_t, ndim=2] rank_lists):
     """
     Calculates Lehmer codes from rank orderings with C loops.
     """
@@ -69,10 +71,10 @@ def _lehmer_from_ranks(np.ndarray[np.int64_t, ndim=2] rank_lists):
     cdef int w = rank_lists.shape[1]
 
     # Create the result array
-    cdef np.ndarray[np.int64_t, ndim=1] results = np.empty(num_windows, dtype=np.int64)
+    cdef np.ndarray[np.uint64_t, ndim=1] results = np.empty(num_windows, dtype=np.uint64)
 
     # Pre-calculate factorials in a C array for fast lookup
-    cdef long long* factorials = <long long*>malloc(w * sizeof(long long))
+    cdef unsigned long long* factorials = <unsigned long long*>malloc(w * sizeof(unsigned long long))
     if not factorials:
         raise MemoryError()
 
@@ -81,9 +83,10 @@ def _lehmer_from_ranks(np.ndarray[np.int64_t, ndim=2] rank_lists):
         factorials[i] = math.factorial(w - i - 1)
 
     # Use a typed memoryview for fast, direct access to the rank_lists data
-    cdef long long[:, ::1] ranks_view = rank_lists
+    cdef np.ndarray[np.uint64_t, ndim=2] contiguous_ranks = np.ascontiguousarray(rank_lists)
+    cdef np.uint64_t[:, ::1] ranks_view = contiguous_ranks
 
-    cdef long long code
+    cdef unsigned long long code
     cdef int smaller
 
 
@@ -102,17 +105,33 @@ def _lehmer_from_ranks(np.ndarray[np.int64_t, ndim=2] rank_lists):
 
     return results
 
-cpdef lcg_lh(long long seed, int n, int w, long long a=1664525, long long c=1013904223, long long m=4294967296 ):
+cpdef lcg_lh(unsigned long long seed, int n, int w, unsigned long long a=1664525,
+             unsigned long long c=1013904223, unsigned long long m=4294967296):
     """
     Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
     All intermediate steps are handled efficiently within Cython.
     Default underlying LCG is standard [0,2^32-1]
     """
-    cdef np.ndarray[np.int64_t, ndim=1] base_sequence = lcg(seed, n + w - 1, a, c, m)
+    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg(seed, n + w - 1, a, c, m)
 
-    cdef np.ndarray[np.int64_t, ndim=2] ranks = _rel_ord(base_sequence, w)
+    cdef np.ndarray[np.intp_t, ndim=2] ranks = _rel_ord(base_sequence, w)
+    cdef np.ndarray[np.uint64_t, ndim=2] ranks_uint64 = ranks.astype(np.uint64)
 
-    cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(ranks)
+    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(ranks_uint64)
+
+    return lehmer_codes
+
+
+cpdef lcg_lh64(unsigned long long seed, int n, int w):
+    """
+    Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
+    All intermediate steps are handled efficiently within Cython.
+    Default underlying LCG is standard [0,2^32-1]
+    """
+    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, n + w - 1)
+
+    cdef np.ndarray[np.intp_t, ndim=1] lehmer_codes = (
+        _lehmer_from_ranks(np.lib.stride_tricks.sliding_window_view(base_sequence, w)))
 
     return lehmer_codes
 

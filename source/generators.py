@@ -36,17 +36,17 @@ def xorshift(seed, n) -> [int]:
     return result
 
 
-def _rel_ord(sequence: [int], w: int) -> [[int]]:
-    """
-    FASTEST
-    Generates all relative orderings for a sequence (not Lehmer codes)
-    param sequence ([int]): the plain PRNG sequence
-    param w (int): window length
-    """
-    arr = np.asarray(sequence)
-    windows = sliding_window_view(arr, w)
-    ranks = np.argsort(np.argsort(windows, axis=1), axis=1)
-    return ranks
+# def _rel_ord(sequence: [int], w: int) -> [[int]]:
+#     """
+#     FASTEST
+#     Generates all relative orderings for a sequence (not Lehmer codes)
+#     param sequence ([int]): the plain PRNG sequence
+#     param w (int): window length
+#     """
+#     arr = np.asarray(sequence)
+#     windows = sliding_window_view(arr, w)
+#     ranks = np.argsort(np.argsort(windows, axis=1), axis=1)
+#     return ranks
 
 
 def _lehmer_from_ranks(rank_lists: [[int]]) -> [int]:
@@ -68,7 +68,7 @@ def lcg_lh(seed: int, n: int, w: int, a=1664525, c=1013904223, m=2 ** 32) -> [in
     """
     Overlapping lehmer code sliding window on top of LCG
     """
-    return _lehmer_from_ranks(_rel_ord(lcg(seed, n + w - 1, a, c, m), w))
+    return _lehmer_from_ranks(sliding_window_view(lcg(seed, n + w - 1, a, c, m), w))
 
 
 def csprng(reps: int, max_exclusive: int):
@@ -84,3 +84,7 @@ def mrs_tw(seed: int, reps: int, max_exclusive: int):
     for i in range(reps):
         a_mrs_tw[i] = random.randint(0, max_exclusive - 1)
     return a_mrs_tw
+
+
+if __name__ == '__main__':
+    print(lcg_lh(42, 10, 6, a=121, c=1))
