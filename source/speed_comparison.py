@@ -2,6 +2,7 @@ from collections import Counter
 import time
 from generators import *
 from stat_properties import display_arrays
+import matplotlib.pyplot as plt
 
 import c_lcg_lh
 
@@ -34,7 +35,7 @@ def speed_test():
 
     # LCG_LH
     start_lcg_lh = time.perf_counter()
-    a_lcg_lh = c_lcg_lh.lcg_lh(seed, reps, window_range)
+    a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range)
     end_lcg_lh = time.perf_counter()
     a_lcg_lh = np.array(a_lcg_lh)
     assert len(a_lcg_lh) == reps
@@ -83,6 +84,29 @@ def compare_cython_speed():
     print(time_c_old/time_c_new)
 
 
+def compare_overlap_speed():
+    reps = 100000
+    window_range = 10
+    seed = 123456789
+
+    times = []
+    for i in range(1, window_range+1):
+        start = time.perf_counter()
+        a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range, i)
+        end = time.perf_counter()
+        a_lcg_lh = np.array(a_lcg_lh)
+        assert len(a_lcg_lh) == reps
+        times.append(end-start)
+
+    x = np.arange(len(times))
+    slope, intercept = np.polyfit(x, times, 1)
+    print(f"Slope: {slope}")
+    plt.plot(times)
+    plt.ylim(bottom=0)
+    plt.show()
+
+
 if __name__ == "__main__":
     # speed_test()
-    compare_cython_speed()
+    # compare_cython_speed()
+    compare_overlap_speed()
