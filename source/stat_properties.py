@@ -16,15 +16,15 @@ def large_lcg_vs_lcg_lh():
     a_lcg = c_lcg_lh.lcg(seed, reps, a=421, c=1, m=max_exclusive)
     a_large_lcg = c_lcg_lh.lcg(seed, reps)
     a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, a_large_lcg)))
-    a_lcg_lh = np.array(c_lcg_lh.lcg_lh(seed, reps, window))
+    a_lcg_lh64 = np.array(c_lcg_lh.lcg_lh64(seed, reps, window))
     a_csprng = csprng(reps, max_exclusive)
-    display_arrays([("CSPRNG", a_csprng), ("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh)], max_exclusive)
+    display_arrays([("CSPRNG", a_csprng), ("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh64)], max_exclusive)
 
     # Plot histograms
     plot_distribution(a_csprng, "CSPRNG", 2*9*5)
     plot_distribution(a_lcg, "LCG", 2*9*5)
     plot_distribution(a_lcg_mod, "Lm_LCG", 2*9*5)
-    plot_distribution(a_lcg_lh, "LCG_LH", 2*9*5)
+    plot_distribution(a_lcg_lh64, "LCG_LH", 2*9*5)
 
     # chisq test
     print("-----------------------")
@@ -37,18 +37,18 @@ def large_lcg_vs_lcg_lh():
     counts, _ = np.histogram(a_lcg_mod, bins=max_exclusive, range=(0, max_exclusive))
     chi2, p = chisquare(counts)
     print(f"Lm_LCG Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
-    counts, _ = np.histogram(a_lcg_lh, bins=max_exclusive, range=(0, max_exclusive))
+    counts, _ = np.histogram(a_lcg_lh64, bins=max_exclusive, range=(0, max_exclusive))
     chi2, p = chisquare(counts)
     print(f"LCG_LH Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
 
     # serial correlation test
-    # print("-----------------------")
-    # ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, max_exclusive], return_df=True)
-    # print(ljung_box_results)
-    # ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, max_exclusive], return_df=True)
-    # print(ljung_box_results)
-    # ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh, lags=[1, window, max_exclusive], return_df=True)
-    # print(ljung_box_results)
+    print("-----------------------")
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, max_exclusive], return_df=True)
+    print(ljung_box_results)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, max_exclusive], return_df=True)
+    print(ljung_box_results)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh64, lags=[1, window, max_exclusive], return_df=True)
+    print(ljung_box_results)
 
 
 def missing_from_range(lst: [int], start: int, end: int) -> [int]:

@@ -4,6 +4,7 @@
 import numpy as np
 cimport numpy as np
 import math
+import sys
 
 from libc.stdlib cimport malloc, free
 
@@ -121,16 +122,27 @@ cpdef lcg_lh(unsigned long long seed, int n, int w, unsigned long long a=1664525
 
     return lehmer_codes
 
-cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w):
+cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w, int step=1,
+                                               int debug = 0):
     """
-    Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
-    All intermediate steps are handled efficiently within Cython.
-    Default underlying LCG is standard [0,2^32-1]
+    Generates Lehmer codes from a sliding window over an LCG sequence with customizable step.
+    Underlying LCG range of 2^64.
     """
-    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, n + w - 1)
+    if step>w:
+        print(f"Step {step} greater than window size {w}", sys.stderr)
 
-    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = (
-        _lehmer_from_ranks(np.lib.stride_tricks.sliding_window_view(base_sequence, w)))
+    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, (n - 1) * step + w)
 
+    cdef np.ndarray[np.uint64_t, ndim=2] windows = np.lib.stride_tricks.sliding_window_view(
+        base_sequence, w, axis=0)[::step]
+
+    if debug:
+        print(f"Base sequence: {base_sequence}")
+        print(f"Generated windows with steps of {step}: {windows}")
+
+    if windows.shape[0] > n:
+        windows = windows[:n]
+
+    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(windows)
     return lehmer_codes
 
