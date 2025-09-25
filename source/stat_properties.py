@@ -17,15 +17,20 @@ def large_lcg_vs_lcg_lh():
     a_large_lcg = c_lcg_lh.lcg(seed, reps)
     a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, a_large_lcg)))
     a_lcg_lh = np.array(c_lcg_lh.lcg_lh(seed, reps, window))
-    display_arrays([("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh)], max_exclusive)
+    a_csprng = csprng(reps, max_exclusive)
+    display_arrays([("CSPRNG", a_csprng), ("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh)], max_exclusive)
 
     # Plot histograms
+    plot_distribution(a_csprng, "CSPRNG", 2*9*5)
     plot_distribution(a_lcg, "LCG", 2*9*5)
     plot_distribution(a_lcg_mod, "Lm_LCG", 2*9*5)
     plot_distribution(a_lcg_lh, "LCG_LH", 2*9*5)
 
     # chisq test
     print("-----------------------")
+    counts, _ = np.histogram(a_csprng, bins=max_exclusive, range=(0, max_exclusive))
+    chi2, p = chisquare(counts)
+    print(f"CSPRNG Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
     counts, _ = np.histogram(a_lcg, bins=max_exclusive, range=(0, max_exclusive))
     chi2, p = chisquare(counts)
     print(f"LCG    Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
@@ -37,13 +42,13 @@ def large_lcg_vs_lcg_lh():
     print(f"LCG_LH Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
 
     # serial correlation test
-    print("-----------------------")
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, max_exclusive], return_df=True)
-    print(ljung_box_results)
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, max_exclusive], return_df=True)
-    print(ljung_box_results)
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh, lags=[1, window, max_exclusive], return_df=True)
-    print(ljung_box_results)
+    # print("-----------------------")
+    # ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, max_exclusive], return_df=True)
+    # print(ljung_box_results)
+    # ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, max_exclusive], return_df=True)
+    # print(ljung_box_results)
+    # ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh, lags=[1, window, max_exclusive], return_df=True)
+    # print(ljung_box_results)
 
 
 def missing_from_range(lst: [int], start: int, end: int) -> [int]:
@@ -68,6 +73,8 @@ def display_arrays(data: [Tuple[str, list]], max_exclusive: int, plot: bool = Fa
         for title, array in data:
             plt.plot(array)
             plt.title(title)
+            plt.xlabel("Index of value generated")
+            plt.ylabel("Value Generated")
             plt.show()
 
     print("-----------------------")

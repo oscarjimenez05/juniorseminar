@@ -54,7 +54,7 @@ def speed_test():
                     ("LCG   ", a_lcg),
                     ("LCG_LH", a_lcg_lh),
                     ("MRS_TW", a_mrs_tw)],
-                   max_exclusive)
+                   max_exclusive, True)
 
 
 def compare_cython_speed():

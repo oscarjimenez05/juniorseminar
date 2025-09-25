@@ -32,6 +32,24 @@ cpdef np.ndarray[np.int64_t, ndim=1] lcg(long long seed, int n,
         result[i] = x
     return result
 
+
+cpdef np.ndarray[np.uint64_t, ndim=1] lcg64(unsigned long long seed, int n):
+    """
+    Cython implementation of a Linear Congruential Generator mod 2^64.
+    It uses parameters a and c from Knuth's MMIX LCG
+    :param seed: (unsigned lonng long int): initial seed
+    :param n: (int): number of elements to generate
+    """
+    cdef np.ndarray[np.uint64_t, ndim=1] result = np.empty(n, dtype=np.uint64)
+    cdef unsigned long long a = 6364136223846793005
+    cdef unsigned long long c = 1442695040888963407
+    cdef unsigned long long x = seed
+    cdef int i
+    for i in range(n):
+        x = ( a * x + c) & 0xFFFFFFFFFFFFFFFF
+        result[i] = x
+    return result
+
 def _rel_ord(np.ndarray[np.int64_t, ndim=1] sequence, int w):
     """
     Cython wrapper for generating relative orderings.
