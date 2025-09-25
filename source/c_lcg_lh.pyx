@@ -84,8 +84,7 @@ def _lehmer_from_ranks(np.ndarray[np.uint64_t, ndim=2] rank_lists):
         factorials[i] = math.factorial(w - i - 1)
 
     # Use a typed memoryview for fast, direct access to the rank_lists data
-    cdef np.ndarray[np.uint64_t, ndim=2] contiguous_ranks = np.ascontiguousarray(rank_lists)
-    cdef np.uint64_t[:, ::1] ranks_view = contiguous_ranks
+    cdef const np.uint64_t[:, :] ranks_view = rank_lists
 
     cdef unsigned long long code
     cdef int smaller

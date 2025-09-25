@@ -88,4 +88,4 @@ def mrs_tw(seed: int, reps: int, max_exclusive: int):
 
 
 if __name__ == '__main__':
-    print(lcg_lh64(42, 10, 5, 5))
+    print(lcg_lh64(42, 10, 4, 2))
