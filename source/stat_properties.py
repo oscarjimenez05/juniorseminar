@@ -16,7 +16,7 @@ def large_lcg_vs_lcg_lh():
     a_lcg = c_lcg_lh.lcg(seed, reps, a=421, c=1, m=max_exclusive)
     a_large_lcg = c_lcg_lh.lcg(seed, reps)
     a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, a_large_lcg)))
-    a_lcg_lh64 = np.array(c_lcg_lh.lcg_lh64(seed, reps, window))
+    a_lcg_lh64 = np.array(c_lcg_lh.lcg_lh64(seed, reps, window, window))
     a_csprng = csprng(reps, max_exclusive)
     display_arrays([("CSPRNG", a_csprng), ("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh64)], max_exclusive)
 
@@ -43,10 +43,19 @@ def large_lcg_vs_lcg_lh():
 
     # serial correlation test
     print("-----------------------")
+    print("CSPRNG:")
+    ljung_box_results = sm.stats.acorr_ljungbox(a_csprng, lags=[1, window, max_exclusive], return_df=True)
+    print(ljung_box_results)
+
+    print("LCG:")
     ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, max_exclusive], return_df=True)
     print(ljung_box_results)
+
+    print("Lm_LCG:")
     ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, max_exclusive], return_df=True)
     print(ljung_box_results)
+
+    print("LCG_LH:")
     ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh64, lags=[1, window, max_exclusive], return_df=True)
     print(ljung_box_results)
 
