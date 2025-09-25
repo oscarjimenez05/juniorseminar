@@ -4,6 +4,7 @@ import secrets
 
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
+from c_lcg_lh import lcg_lh64
 
 
 def lcg(seed: int, n: int, a=1664525, c=1013904223, m=2 ** 32) -> [int]:
@@ -87,4 +88,4 @@ def mrs_tw(seed: int, reps: int, max_exclusive: int):
 
 
 if __name__ == '__main__':
-    print(lcg_lh(42, 10, 6, a=121, c=1))
+    print(lcg_lh64(42, 10, 5, 5))
