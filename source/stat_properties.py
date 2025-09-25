@@ -41,7 +41,32 @@ def large_lcg_vs_lcg_lh():
     chi2, p = chisquare(counts)
     print(f"LCG_LH Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
 
-    # serial correlation test
+
+
+def missing_from_range(lst: [int], start: int, end: int) -> [int]:
+    """
+    :param lst: a list of numbers
+    :param start: start value (inclusive)
+    :param end: end value (inclusive)
+    :return: a list of numbers not present in the range
+    """
+    full_range = set(range(start, end + 1))
+    return sorted(full_range - set(lst))
+
+
+def serial_correlation_comparison():
+    seed = 2025
+    reps = 100000
+    window = 6
+
+    max_exclusive = math.factorial(window)
+
+    a_lcg = c_lcg_lh.lcg(seed, reps, a=421, c=1, m=max_exclusive)
+    a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, c_lcg_lh.lcg(seed, reps))))
+    a_lcg_lh64 = np.array(c_lcg_lh.lcg_lh64(seed, reps, window, window))
+    a_csprng = csprng(reps, max_exclusive)
+    a_mrs_tw = mrs_tw(seed, reps, max_exclusive)
+
     print("-----------------------")
     print("CSPRNG:")
     ljung_box_results = sm.stats.acorr_ljungbox(a_csprng, lags=[1, window, max_exclusive], return_df=True)
@@ -59,17 +84,9 @@ def large_lcg_vs_lcg_lh():
     ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh64, lags=[1, window, max_exclusive], return_df=True)
     print(ljung_box_results)
 
-
-def missing_from_range(lst: [int], start: int, end: int) -> [int]:
-    """
-    :param lst: a list of numbers
-    :param start: start value (inclusive)
-    :param end: end value (inclusive)
-    :return: a list of numbers not present in the range
-    """
-    full_range = set(range(start, end + 1))
-    return sorted(full_range - set(lst))
-
+    print("MRS_TW:")
+    ljung_box_results = sm.stats.acorr_ljungbox(a_mrs_tw, lags=[1, window, max_exclusive], return_df=True)
+    print(ljung_box_results)
 
 def display_arrays(data: [Tuple[str, list]], max_exclusive: int, plot: bool = False) -> None:
     """
@@ -109,4 +126,5 @@ def plot_distribution(data, title="Distribution of Values", bins=24):
 
 
 if __name__ == "__main__":
-    large_lcg_vs_lcg_lh()
+    # large_lcg_vs_lcg_lh()
+    serial_correlation_comparison()
