@@ -77,7 +77,7 @@ def compare_cython_speed():
     print(time_c_new)
     print(time_c_old)
     print(time_p)
-    print(time_p/time_c_old)
+    print(time_p/time_c_new)
 
 
 if __name__ == "__main__":

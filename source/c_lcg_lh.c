@@ -3222,7 +3222,7 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_lcg(unsigned PY_LONG_LONG, int, int __py
 static PyArrayObject *__pyx_f_8c_lcg_lh_lcg64(unsigned PY_LONG_LONG, int, int __pyx_skip_dispatch); /*proto*/
 static PyArrayObject *__pyx_f_8c_lcg_lh__rel_ord(PyArrayObject *, int); /*proto*/
 static PyObject *__pyx_f_8c_lcg_lh_lcg_lh(unsigned PY_LONG_LONG, int, int, int __pyx_skip_dispatch, struct __pyx_opt_args_8c_lcg_lh_lcg_lh *__pyx_optional_args); /*proto*/
-static PyObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG, int, int, int __pyx_skip_dispatch); /*proto*/
+static PyArrayObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG, int, int, int __pyx_skip_dispatch); /*proto*/
 static int __pyx_array_allocate_buffer(struct __pyx_array_obj *); /*proto*/
 static struct __pyx_array_obj *__pyx_array_new(PyObject *, Py_ssize_t, char *, char const *, char *); /*proto*/
 static PyObject *__pyx_memoryview_new(PyObject *, int, int, __Pyx_TypeInfo const *); /*proto*/
@@ -20282,7 +20282,7 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh(unsigned PY_LONG_LONG __pyx_v_seed, in
  * 
  *     return lehmer_codes             # <<<<<<<<<<<<<<
  * 
- * 
+ * cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w):
 */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF((PyObject *)__pyx_v_lehmer_codes);
@@ -20508,10 +20508,10 @@ static PyObject *__pyx_pf_8c_lcg_lh_6lcg_lh(CYTHON_UNUSED PyObject *__pyx_self, 
   return __pyx_r;
 }
 
-/* "c_lcg_lh.pyx":125
+/* "c_lcg_lh.pyx":124
+ *     return lehmer_codes
  * 
- * 
- * cpdef lcg_lh64(unsigned long long seed, int n, int w):             # <<<<<<<<<<<<<<
+ * cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w):             # <<<<<<<<<<<<<<
  *     """
  *     Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
 */
@@ -20523,14 +20523,14 @@ PyObject *const *__pyx_args, Py_ssize_t __pyx_nargs, PyObject *__pyx_kwds
 PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
-static PyObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG __pyx_v_seed, int __pyx_v_n, int __pyx_v_w, CYTHON_UNUSED int __pyx_skip_dispatch) {
+static PyArrayObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG __pyx_v_seed, int __pyx_v_n, int __pyx_v_w, CYTHON_UNUSED int __pyx_skip_dispatch) {
   PyArrayObject *__pyx_v_base_sequence = 0;
   PyArrayObject *__pyx_v_lehmer_codes = 0;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_base_sequence;
   __Pyx_Buffer __pyx_pybuffer_base_sequence;
   __Pyx_LocalBuf_ND __pyx_pybuffernd_lehmer_codes;
   __Pyx_Buffer __pyx_pybuffer_lehmer_codes;
-  PyObject *__pyx_r = NULL;
+  PyArrayObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
   PyObject *__pyx_t_2 = NULL;
@@ -20553,47 +20553,47 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG __pyx_v_seed, 
   __pyx_pybuffernd_lehmer_codes.data = NULL;
   __pyx_pybuffernd_lehmer_codes.rcbuffer = &__pyx_pybuffer_lehmer_codes;
 
-  /* "c_lcg_lh.pyx":131
+  /* "c_lcg_lh.pyx":130
  *     Default underlying LCG is standard [0,2^32-1]
  *     """
  *     cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, n + w - 1)             # <<<<<<<<<<<<<<
  * 
- *     cdef np.ndarray[np.intp_t, ndim=1] lehmer_codes = (
+ *     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = (
 */
-  __pyx_t_1 = ((PyObject *)__pyx_f_8c_lcg_lh_lcg64(__pyx_v_seed, ((__pyx_v_n + __pyx_v_w) - 1), 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_8c_lcg_lh_lcg64(__pyx_v_seed, ((__pyx_v_n + __pyx_v_w) - 1), 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
     if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_base_sequence.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_5numpy_uint64_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_base_sequence = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_base_sequence.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 131, __pyx_L1_error)
+      __PYX_ERR(0, 130, __pyx_L1_error)
     } else {__pyx_pybuffernd_base_sequence.diminfo[0].strides = __pyx_pybuffernd_base_sequence.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_base_sequence.diminfo[0].shape = __pyx_pybuffernd_base_sequence.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_base_sequence = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "c_lcg_lh.pyx":134
+  /* "c_lcg_lh.pyx":133
  * 
- *     cdef np.ndarray[np.intp_t, ndim=1] lehmer_codes = (
+ *     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = (
  *         _lehmer_from_ranks(np.lib.stride_tricks.sliding_window_view(base_sequence, w)))             # <<<<<<<<<<<<<<
  * 
  *     return lehmer_codes
 */
   __pyx_t_2 = NULL;
-  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_lehmer_from_ranks); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_mstate_global->__pyx_n_u_lehmer_from_ranks); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_np); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_lib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_lib); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_stride_tricks); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_stride_tricks); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_6);
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   __pyx_t_5 = __pyx_t_6;
   __Pyx_INCREF(__pyx_t_5);
-  __pyx_t_7 = __Pyx_PyLong_From_int(__pyx_v_w); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 134, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_PyLong_From_int(__pyx_v_w); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 133, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __pyx_t_8 = 0;
   {
@@ -20602,7 +20602,7 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG __pyx_v_seed, 
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 134, __pyx_L1_error)
+    if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
   }
   __pyx_t_8 = 1;
@@ -20623,36 +20623,36 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG __pyx_v_seed, 
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 134, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 133, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
   }
-  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_mstate_global->__pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 134, __pyx_L1_error)
+  if (!(likely(((__pyx_t_1) == Py_None) || likely(__Pyx_TypeTest(__pyx_t_1, __pyx_mstate_global->__pyx_ptype_5numpy_ndarray))))) __PYX_ERR(0, 133, __pyx_L1_error)
   {
     __Pyx_BufFmt_StackElem __pyx_stack[1];
-    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_lehmer_codes.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_5numpy_intp_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
+    if (unlikely(__Pyx_GetBufferAndValidate(&__pyx_pybuffernd_lehmer_codes.rcbuffer->pybuffer, (PyObject*)((PyArrayObject *)__pyx_t_1), &__Pyx_TypeInfo_nn___pyx_t_5numpy_uint64_t, PyBUF_FORMAT| PyBUF_STRIDES, 1, 0, __pyx_stack) == -1)) {
       __pyx_v_lehmer_codes = ((PyArrayObject *)Py_None); __Pyx_INCREF(Py_None); __pyx_pybuffernd_lehmer_codes.rcbuffer->pybuffer.buf = NULL;
-      __PYX_ERR(0, 133, __pyx_L1_error)
+      __PYX_ERR(0, 132, __pyx_L1_error)
     } else {__pyx_pybuffernd_lehmer_codes.diminfo[0].strides = __pyx_pybuffernd_lehmer_codes.rcbuffer->pybuffer.strides[0]; __pyx_pybuffernd_lehmer_codes.diminfo[0].shape = __pyx_pybuffernd_lehmer_codes.rcbuffer->pybuffer.shape[0];
     }
   }
   __pyx_v_lehmer_codes = ((PyArrayObject *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "c_lcg_lh.pyx":136
+  /* "c_lcg_lh.pyx":135
  *         _lehmer_from_ranks(np.lib.stride_tricks.sliding_window_view(base_sequence, w)))
  * 
  *     return lehmer_codes             # <<<<<<<<<<<<<<
  * 
 */
-  __Pyx_XDECREF(__pyx_r);
+  __Pyx_XDECREF((PyObject *)__pyx_r);
   __Pyx_INCREF((PyObject *)__pyx_v_lehmer_codes);
-  __pyx_r = ((PyObject *)__pyx_v_lehmer_codes);
+  __pyx_r = ((PyArrayObject *)__pyx_v_lehmer_codes);
   goto __pyx_L0;
 
-  /* "c_lcg_lh.pyx":125
+  /* "c_lcg_lh.pyx":124
+ *     return lehmer_codes
  * 
- * 
- * cpdef lcg_lh64(unsigned long long seed, int n, int w):             # <<<<<<<<<<<<<<
+ * cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w):             # <<<<<<<<<<<<<<
  *     """
  *     Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
 */
@@ -20682,7 +20682,7 @@ static PyObject *__pyx_f_8c_lcg_lh_lcg_lh64(unsigned PY_LONG_LONG __pyx_v_seed, 
   __pyx_L2:;
   __Pyx_XDECREF((PyObject *)__pyx_v_base_sequence);
   __Pyx_XDECREF((PyObject *)__pyx_v_lehmer_codes);
-  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_XGIVEREF((PyObject *)__pyx_r);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
@@ -20729,46 +20729,46 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_seed,&__pyx_mstate_global->__pyx_n_u_n,&__pyx_mstate_global->__pyx_n_u_w,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 125, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len) < 0) __PYX_ERR(0, 124, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 125, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 124, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 125, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 124, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 125, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 124, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "lcg_lh64", 0) < 0) __PYX_ERR(0, 125, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "lcg_lh64", 0) < 0) __PYX_ERR(0, 124, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 3; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("lcg_lh64", 1, 3, 3, i); __PYX_ERR(0, 125, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("lcg_lh64", 1, 3, 3, i); __PYX_ERR(0, 124, __pyx_L3_error) }
       }
     } else if (unlikely(__pyx_nargs != 3)) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 125, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 124, __pyx_L3_error)
       values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 125, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 124, __pyx_L3_error)
       values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 125, __pyx_L3_error)
+      if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 124, __pyx_L3_error)
     }
-    __pyx_v_seed = __Pyx_PyLong_As_unsigned_PY_LONG_LONG(values[0]); if (unlikely((__pyx_v_seed == (unsigned PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
-    __pyx_v_n = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_n == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
-    __pyx_v_w = __Pyx_PyLong_As_int(values[2]); if (unlikely((__pyx_v_w == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 125, __pyx_L3_error)
+    __pyx_v_seed = __Pyx_PyLong_As_unsigned_PY_LONG_LONG(values[0]); if (unlikely((__pyx_v_seed == (unsigned PY_LONG_LONG)-1) && PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L3_error)
+    __pyx_v_n = __Pyx_PyLong_As_int(values[1]); if (unlikely((__pyx_v_n == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L3_error)
+    __pyx_v_w = __Pyx_PyLong_As_int(values[2]); if (unlikely((__pyx_v_w == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 124, __pyx_L3_error)
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("lcg_lh64", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 125, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("lcg_lh64", 1, 3, 3, __pyx_nargs); __PYX_ERR(0, 124, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -20798,7 +20798,7 @@ static PyObject *__pyx_pf_8c_lcg_lh_8lcg_lh64(CYTHON_UNUSED PyObject *__pyx_self
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("lcg_lh64", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_8c_lcg_lh_lcg_lh64(__pyx_v_seed, __pyx_v_n, __pyx_v_w, 1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_8c_lcg_lh_lcg_lh64(__pyx_v_seed, __pyx_v_n, __pyx_v_w, 1)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -22978,16 +22978,16 @@ __Pyx_RefNannySetupContext("PyInit_c_lcg_lh", 0);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_lcg_lh, __pyx_t_5) < 0) __PYX_ERR(0, 108, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "c_lcg_lh.pyx":125
+  /* "c_lcg_lh.pyx":124
+ *     return lehmer_codes
  * 
- * 
- * cpdef lcg_lh64(unsigned long long seed, int n, int w):             # <<<<<<<<<<<<<<
+ * cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w):             # <<<<<<<<<<<<<<
  *     """
  *     Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
 */
-  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_8c_lcg_lh_9lcg_lh64, 0, __pyx_mstate_global->__pyx_n_u_lcg_lh64, NULL, __pyx_mstate_global->__pyx_n_u_c_lcg_lh, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 125, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_CyFunction_New(&__pyx_mdef_8c_lcg_lh_9lcg_lh64, 0, __pyx_mstate_global->__pyx_n_u_lcg_lh64, NULL, __pyx_mstate_global->__pyx_n_u_c_lcg_lh, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[4])); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_lcg_lh64, __pyx_t_5) < 0) __PYX_ERR(0, 125, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_lcg_lh64, __pyx_t_5) < 0) __PYX_ERR(0, 124, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
   /* "c_lcg_lh.pyx":1
@@ -23368,7 +23368,7 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_c_lcg_lh_pyx, __pyx_mstate->__pyx_n_u_lcg_lh, __pyx_k_I_C1_AV2Rr_3cQTTU_xq_q_8_WARq_8, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 125, 52};
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 124, 52};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_seed, __pyx_mstate->__pyx_n_u_n, __pyx_mstate->__pyx_n_u_w};
     __pyx_mstate_global->__pyx_codeobj_tab[4] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_c_lcg_lh_pyx, __pyx_mstate->__pyx_n_u_lcg_lh64, __pyx_k_avRr_2Q_2T_C1OST_1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[4])) goto bad;
   }
