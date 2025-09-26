@@ -68,25 +68,27 @@ def serial_correlation_comparison():
     a_mrs_tw = mrs_tw(seed, reps, max_exclusive)
 
     print("-----------------------")
+    lags = [1, window, max_exclusive, max_exclusive + 1]
     print("CSPRNG:")
-    ljung_box_results = sm.stats.acorr_ljungbox(a_csprng, lags=[1, window, max_exclusive], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_csprng, lags=lags, return_df=True)
     print(ljung_box_results)
 
     print("LCG:")
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=[1, window, max_exclusive], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg, lags=lags, return_df=True)
     print(ljung_box_results)
 
     print("Lm_LCG:")
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=[1, window, max_exclusive], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_mod, lags=lags, return_df=True)
     print(ljung_box_results)
 
     print("LCG_LH:")
-    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh64, lags=[1, window, max_exclusive], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_lcg_lh64, lags=lags, return_df=True)
     print(ljung_box_results)
 
     print("MRS_TW:")
-    ljung_box_results = sm.stats.acorr_ljungbox(a_mrs_tw, lags=[1, window, max_exclusive], return_df=True)
+    ljung_box_results = sm.stats.acorr_ljungbox(a_mrs_tw, lags=lags, return_df=True)
     print(ljung_box_results)
+
 
 def display_arrays(data: [Tuple[str, list]], max_exclusive: int, plot: bool = False) -> None:
     """
@@ -126,5 +128,5 @@ def plot_distribution(data, title="Distribution of Values", bins=24):
 
 
 if __name__ == "__main__":
-    large_lcg_vs_lcg_lh()
-    #serial_correlation_comparison()
+    #large_lcg_vs_lcg_lh()
+    serial_correlation_comparison()
