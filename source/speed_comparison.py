@@ -106,7 +106,28 @@ def compare_overlap_speed():
     plt.show()
 
 
+def compare_window_size_speed():
+    reps = 1000000
+    seed = 123456789
+    times = []
+    for i in range(2, 18):
+        start = time.perf_counter()
+        a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, i, i)
+        end = time.perf_counter()
+        a_lcg_lh = np.array(a_lcg_lh)
+        assert len(a_lcg_lh) == reps
+        times.append(end - start)
+
+    x = np.arange(len(times))
+    slope, intercept = np.polyfit(x, times, 1)
+    print(f"Slope: {slope}")
+    plt.plot(times)
+    plt.ylim(bottom=0)
+    plt.show()
+
+
 if __name__ == "__main__":
-    speed_test()
+    # speed_test()
     # compare_cython_speed()
     # compare_overlap_speed()
+    compare_window_size_speed()
