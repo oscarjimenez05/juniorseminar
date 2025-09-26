@@ -64,7 +64,7 @@ cdef np.ndarray[np.uint64_t, ndim=2]_rel_ord(np.ndarray[np.uint64_t, ndim=1] seq
 
 #@cython.boundscheck(False)
 #@cython.wraparound(False)
-def _lehmer_from_ranks(np.ndarray[np.uint64_t, ndim=2] rank_lists):
+cdef np.ndarray[np.uint64_t, ndim=1] _lehmer_from_ranks(np.ndarray[np.uint64_t, ndim=2] rank_lists):
     """
     Calculates Lehmer codes from rank orderings with C loops.
     """
@@ -144,4 +144,17 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, i
 
     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(windows)
     return lehmer_codes
+
+
+cpdef calculate_w(unsigned long long r, float alpha=0.05, int debug=0):
+    w = 1
+    factorial = 1.0
+    while 1:
+        w += 1
+        factorial *= w
+        if debug:
+            print(f"Currently on R = {factorial} ({w}!)\t\t {(factorial % r)*100/factorial} <= {100*alpha}")
+        if (factorial % r <= (alpha * factorial)) and (factorial >= r):
+            break
+    return w
 
