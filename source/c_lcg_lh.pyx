@@ -180,12 +180,17 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
             count += 1
 
         seed = underl_sequence[-1]
+
         if debug:
             print(f"Base sequence: {underl_sequence}")
             print(f"Next seed: {seed}")
 
         # generate the next numbers
-        underl_sequence[step:] = lcg64(seed, step)
+        if step == w:
+            underl_sequence[:] = lcg64(seed, n)
+        else:
+            underl_sequence[:-step] = underl_sequence[step:]
+            underl_sequence[-step:] = lcg64(seed, step)
 
     return lehmer_codes
 
