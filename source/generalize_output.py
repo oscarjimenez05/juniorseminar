@@ -19,10 +19,10 @@ def max_case_check():
 
 def g_lcg_lh64_check():
     seed = 123456789
-    reps = 100000
+    reps = 100
     minimum = 5
     maximum = 136
-    a_g_lcg_lh64 = c_lcg_lh.g_lcg_lh64(seed, reps, minimum, maximum, 1)
+    a_g_lcg_lh64 = c_lcg_lh.g_lcg_lh64(seed, reps, minimum, maximum, 1, 1)
     display_arrays([("Generalized LCG_LH", a_g_lcg_lh64)], 137)
 
 if __name__ == '__main__':
