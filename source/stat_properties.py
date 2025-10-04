@@ -119,6 +119,36 @@ def display_arrays(data: [Tuple[str, list]], max_exclusive: int, plot: bool = Fa
         print(f"{title} MEAN: " + str(mean) + f" (diff. {(exp_mean - mean):.5f})")
 
 
+def general_display_arrays(data: [Tuple[str, list]], minimum: int, maximum: int, plot: bool = False) -> None:
+    """
+    :param data: a list of tuples of the form (title, array)
+    :param minimum: (inclusive)
+    :param maximum: (inclusive)
+    :param plot: whether to plot the data or not, defaults to False
+    :return: None
+    """
+    if plot:
+        for title, array in data:
+            plt.plot(array)
+            plt.title(title)
+            plt.xlabel("Index of value generated")
+            plt.ylabel("Value Generated")
+            plt.show()
+
+    print("-----------------------")
+    for title, array in data:
+        print(f"{title} MIN and MAX: " + str(int(array.min())) + ", " + str(int(array.max())))
+    print("-----------------------")
+    for title, array in data:
+        print(f"Not present in {title}: " + str(missing_from_range(array, minimum, maximum)))
+    print("-----------------------")
+    exp_mean = (maximum + minimum) / 2
+    print("Expec. MEAN: " + str(exp_mean))
+    for title, array in data:
+        mean = array.mean()
+        print(f"{title} MEAN: " + str(mean) + f" (diff. {(exp_mean - mean):.5f})")
+
+
 def plot_distribution(data, title="Distribution of Values", bins=24):
     plt.hist(data, bins=bins, align="left", rwidth=0.9, color="skyblue", edgecolor="black")
     plt.xlabel("Generated Values")
