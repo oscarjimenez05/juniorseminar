@@ -1905,7 +1905,7 @@ struct __pyx_opt_args_8c_lcg_lh_g_lcg_lh64 {
   int debug;
 };
 
-/* "c_lcg_lh.pyx":193
+/* "c_lcg_lh.pyx":198
  * 
  * 
  * cdef _calculate_w(unsigned long long r, float alpha=0.05, int debug=0):             # <<<<<<<<<<<<<<
@@ -3504,7 +3504,7 @@ static const char __pyx_k_unable_to_allocate_array_data[] = "unable to allocate 
 static const char __pyx_k_I_C1_AV2Rr_3cQTTU_1_8_WARq_88J[] = "\320\000I\310\021\330\"C\3001\360\014\000\005:\270\023\270A\270V\3002\300R\300r\310\022\3103\310c\320QT\320TU\340\0041\260\030\270\021\270/\310\021\330\0048\270\005\270W\300A\300R\300q\340\0048\3208J\310!\3101\340\004\013\2101";
 static const char __pyx_k_strided_and_direct_or_indirect[] = "<strided and direct or indirect>";
 static const char __pyx_k_Generated_windows_with_steps_of[] = "Generated windows with steps of ";
-static const char __pyx_k_VW_7_7_1_Qa_4z_Rs_1A_8_s_PRRS_0[] = "\200\001\330VW\330;<\360\014\000\005\034\2307\240!\2407\250!\2501\330\004\021\220\034\230Q\230a\330\004\033\2304\230z\250\021\250!\330\004%\240R\240s\250!\2501\250A\330\0048\270\002\270&\300\001\300\026\300s\310&\320PR\320RS\330\0040\260\002\260&\270\002\270#\270T\300\026\300r\310\021\360\006\000\005\010\200t\2101\210A\330\010\r\210Q\210b\220\t\320\0319\270\022\2703\270a\360\006\000\005\r\210A\340\004;\2705\300\001\300\026\300q\340\004\n\210&\220\002\220!\330\010\014\210A\210U\220!\340\010\021\220\031\320\032,\250A\250Q\340\010\013\2107\220\"\220A\330\014\030\230\001\230\032\2406\250\021\250#\250R\250q\330\014\025\220Q\340\010\017\210\177\230b\240\001\330\010\013\2101\330\014\021\220\021\220\"\320\024'\240q\330\014\021\220\021\220\"\220O\2401\360\006\000\t\030\220q\230\t\240\025\240a\240v\250Q\340\004\013\2101";
+static const char __pyx_k_VW_7_7_1_Qa_4z_Rs_1A_8_s_PRRS_0[] = "\200\001\330VW\330;<\360\014\000\005\034\2307\240!\2407\250!\2501\330\004\021\220\034\230Q\230a\330\004\033\2304\230z\250\021\250!\330\004%\240R\240s\250!\2501\250A\330\0048\270\002\270&\300\001\300\026\300s\310&\320PR\320RS\330\0040\260\002\260&\270\002\270#\270T\300\026\300r\310\021\360\006\000\005\010\200t\2101\210A\330\010\r\210Q\210b\220\t\320\0319\270\022\2703\270a\360\006\000\005\r\210A\340\004;\2705\300\001\300\026\300q\340\004\n\210&\220\002\220!\330\010\014\210A\210U\220!\340\010\021\220\031\320\032,\250A\250Q\340\010\013\2107\220\"\220A\330\014\030\230\001\230\032\2406\250\021\250#\250R\250q\330\014\025\220Q\340\010\017\210\177\230b\240\001\340\010\013\2101\330\014\021\220\021\220\"\320\024'\240q\330\014\021\220\021\220\"\220O\2401\360\006\000\t\014\2105\220\003\2201\330\014\033\2306\240\025\240a\240v\250Q\340\014\033\2302\230Q\230h\240o\260Q\260a\330\014\033\2301\230A\230Y\240e\2501\250F\260!\340\004\013\2101";
 static const char __pyx_k_numpy_core_multiarray_failed_to[] = "numpy.core.multiarray failed to import";
 static const char __pyx_k_All_dimensions_preceding_dimensi[] = "All dimensions preceding dimension %d must be indexed and not sliced";
 static const char __pyx_k_Buffer_view_does_not_expose_stri[] = "Buffer view does not expose strides";
@@ -21460,8 +21460,8 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_g_lcg_lh64(unsigned PY_LONG_LONG __pyx_v
  *             count += 1
  * 
  *         seed = underl_sequence[-1]             # <<<<<<<<<<<<<<
+ * 
  *         if debug:
- *             print(f"Base sequence: {underl_sequence}")
 */
     __pyx_t_13 = -1L;
     __pyx_t_2 = -1;
@@ -21475,9 +21475,9 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_g_lcg_lh64(unsigned PY_LONG_LONG __pyx_v
     }
     __pyx_v_seed = (*__Pyx_BufPtrStrided1d(__pyx_t_5numpy_uint64_t *, __pyx_pybuffernd_underl_sequence.rcbuffer->pybuffer.buf, __pyx_t_13, __pyx_pybuffernd_underl_sequence.diminfo[0].strides));
 
-    /* "c_lcg_lh.pyx":183
- * 
+    /* "c_lcg_lh.pyx":184
  *         seed = underl_sequence[-1]
+ * 
  *         if debug:             # <<<<<<<<<<<<<<
  *             print(f"Base sequence: {underl_sequence}")
  *             print(f"Next seed: {seed}")
@@ -21485,8 +21485,8 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_g_lcg_lh64(unsigned PY_LONG_LONG __pyx_v
     __pyx_t_10 = (__pyx_v_debug != 0);
     if (__pyx_t_10) {
 
-      /* "c_lcg_lh.pyx":184
- *         seed = underl_sequence[-1]
+      /* "c_lcg_lh.pyx":185
+ * 
  *         if debug:
  *             print(f"Base sequence: {underl_sequence}")             # <<<<<<<<<<<<<<
  *             print(f"Next seed: {seed}")
@@ -21495,9 +21495,9 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_g_lcg_lh64(unsigned PY_LONG_LONG __pyx_v
       __pyx_t_1 = NULL;
       __Pyx_INCREF(__pyx_builtin_print);
       __pyx_t_5 = __pyx_builtin_print; 
-      __pyx_t_3 = __Pyx_PyObject_FormatSimple(((PyObject *)__pyx_v_underl_sequence), __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 184, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_FormatSimple(((PyObject *)__pyx_v_underl_sequence), __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 185, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Base_sequence, __pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 184, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Base_sequence, __pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 185, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __pyx_t_6 = 1;
@@ -21507,12 +21507,12 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_g_lcg_lh64(unsigned PY_LONG_LONG __pyx_v
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-        if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 184, __pyx_L1_error)
+        if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 185, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
       }
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-      /* "c_lcg_lh.pyx":185
+      /* "c_lcg_lh.pyx":186
  *         if debug:
  *             print(f"Base sequence: {underl_sequence}")
  *             print(f"Next seed: {seed}")             # <<<<<<<<<<<<<<
@@ -21522,9 +21522,9 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_g_lcg_lh64(unsigned PY_LONG_LONG __pyx_v
       __pyx_t_5 = NULL;
       __Pyx_INCREF(__pyx_builtin_print);
       __pyx_t_9 = __pyx_builtin_print; 
-      __pyx_t_1 = __Pyx_PyUnicode_From_unsigned_PY_LONG_LONG(__pyx_v_seed, 0, ' ', 'd'); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 185, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyUnicode_From_unsigned_PY_LONG_LONG(__pyx_v_seed, 0, ' ', 'd'); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_3 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Next_seed, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 185, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_Next_seed, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 186, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __pyx_t_6 = 1;
@@ -21534,41 +21534,100 @@ static PyArrayObject *__pyx_f_8c_lcg_lh_g_lcg_lh64(unsigned PY_LONG_LONG __pyx_v
         __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
         __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 185, __pyx_L1_error)
+        if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 186, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_8);
       }
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
 
-      /* "c_lcg_lh.pyx":183
- * 
+      /* "c_lcg_lh.pyx":184
  *         seed = underl_sequence[-1]
+ * 
  *         if debug:             # <<<<<<<<<<<<<<
  *             print(f"Base sequence: {underl_sequence}")
  *             print(f"Next seed: {seed}")
 */
     }
 
-    /* "c_lcg_lh.pyx":188
+    /* "c_lcg_lh.pyx":189
  * 
  *         # generate the next numbers
- *         underl_sequence[step:] = lcg64(seed, step)             # <<<<<<<<<<<<<<
+ *         if step == w:             # <<<<<<<<<<<<<<
+ *             underl_sequence[:] = lcg64(seed, n)
+ *         else:
+*/
+    __pyx_t_10 = (__pyx_v_step == __pyx_v_w);
+    if (__pyx_t_10) {
+
+      /* "c_lcg_lh.pyx":190
+ *         # generate the next numbers
+ *         if step == w:
+ *             underl_sequence[:] = lcg64(seed, n)             # <<<<<<<<<<<<<<
+ *         else:
+ *             underl_sequence[:-step] = underl_sequence[step:]
+*/
+      __pyx_t_8 = ((PyObject *)__pyx_f_8c_lcg_lh_lcg64(__pyx_v_seed, __pyx_v_n, 0)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 190, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      if (unlikely((PyObject_SetItem(((PyObject *)__pyx_v_underl_sequence), __pyx_mstate_global->__pyx_slice[0], __pyx_t_8) < 0))) __PYX_ERR(0, 190, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+      /* "c_lcg_lh.pyx":189
+ * 
+ *         # generate the next numbers
+ *         if step == w:             # <<<<<<<<<<<<<<
+ *             underl_sequence[:] = lcg64(seed, n)
+ *         else:
+*/
+      goto __pyx_L8;
+    }
+
+    /* "c_lcg_lh.pyx":192
+ *             underl_sequence[:] = lcg64(seed, n)
+ *         else:
+ *             underl_sequence[:-step] = underl_sequence[step:]             # <<<<<<<<<<<<<<
+ *             underl_sequence[-step:] = lcg64(seed, step)
+ * 
+*/
+    /*else*/ {
+      __pyx_t_8 = __Pyx_PyLong_From_int(__pyx_v_step); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_9 = PySlice_New(__pyx_t_8, Py_None, Py_None); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __pyx_t_8 = __Pyx_PyObject_GetItem(((PyObject *)__pyx_v_underl_sequence), __pyx_t_9); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_9 = __Pyx_PyLong_From_int((-__pyx_v_step)); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_3 = PySlice_New(Py_None, __pyx_t_9, Py_None); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      if (unlikely((PyObject_SetItem(((PyObject *)__pyx_v_underl_sequence), __pyx_t_3, __pyx_t_8) < 0))) __PYX_ERR(0, 192, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+
+      /* "c_lcg_lh.pyx":193
+ *         else:
+ *             underl_sequence[:-step] = underl_sequence[step:]
+ *             underl_sequence[-step:] = lcg64(seed, step)             # <<<<<<<<<<<<<<
  * 
  *     return lehmer_codes
 */
-    __pyx_t_8 = ((PyObject *)__pyx_f_8c_lcg_lh_lcg64(__pyx_v_seed, __pyx_v_step, 0)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 188, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_8);
-    __pyx_t_9 = __Pyx_PyLong_From_int(__pyx_v_step); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 188, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_3 = PySlice_New(__pyx_t_9, Py_None, Py_None); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 188, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_3);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (unlikely((PyObject_SetItem(((PyObject *)__pyx_v_underl_sequence), __pyx_t_3, __pyx_t_8) < 0))) __PYX_ERR(0, 188, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __pyx_t_8 = ((PyObject *)__pyx_f_8c_lcg_lh_lcg64(__pyx_v_seed, __pyx_v_step, 0)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_3 = __Pyx_PyLong_From_int((-__pyx_v_step)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __pyx_t_9 = PySlice_New(__pyx_t_3, Py_None, Py_None); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      if (unlikely((PyObject_SetItem(((PyObject *)__pyx_v_underl_sequence), __pyx_t_9, __pyx_t_8) < 0))) __PYX_ERR(0, 193, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    }
+    __pyx_L8:;
   }
 
-  /* "c_lcg_lh.pyx":190
- *         underl_sequence[step:] = lcg64(seed, step)
+  /* "c_lcg_lh.pyx":195
+ *             underl_sequence[-step:] = lcg64(seed, step)
  * 
  *     return lehmer_codes             # <<<<<<<<<<<<<<
  * 
@@ -21791,7 +21850,7 @@ static PyObject *__pyx_pf_8c_lcg_lh_8g_lcg_lh64(CYTHON_UNUSED PyObject *__pyx_se
   return __pyx_r;
 }
 
-/* "c_lcg_lh.pyx":193
+/* "c_lcg_lh.pyx":198
  * 
  * 
  * cdef _calculate_w(unsigned long long r, float alpha=0.05, int debug=0):             # <<<<<<<<<<<<<<
@@ -21831,7 +21890,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
     }
   }
 
-  /* "c_lcg_lh.pyx":194
+  /* "c_lcg_lh.pyx":199
  * 
  * cdef _calculate_w(unsigned long long r, float alpha=0.05, int debug=0):
  *     w = 1             # <<<<<<<<<<<<<<
@@ -21841,7 +21900,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
   __Pyx_INCREF(__pyx_mstate_global->__pyx_int_1);
   __pyx_v_w = __pyx_mstate_global->__pyx_int_1;
 
-  /* "c_lcg_lh.pyx":195
+  /* "c_lcg_lh.pyx":200
  * cdef _calculate_w(unsigned long long r, float alpha=0.05, int debug=0):
  *     w = 1
  *     factorial = 1.0             # <<<<<<<<<<<<<<
@@ -21851,7 +21910,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
   __Pyx_INCREF(__pyx_mstate_global->__pyx_float_1_0);
   __pyx_v_factorial = __pyx_mstate_global->__pyx_float_1_0;
 
-  /* "c_lcg_lh.pyx":196
+  /* "c_lcg_lh.pyx":201
  *     w = 1
  *     factorial = 1.0
  *     while 1:             # <<<<<<<<<<<<<<
@@ -21860,31 +21919,31 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
 */
   while (1) {
 
-    /* "c_lcg_lh.pyx":197
+    /* "c_lcg_lh.pyx":202
  *     factorial = 1.0
  *     while 1:
  *         w += 1             # <<<<<<<<<<<<<<
  *         factorial *= w
  *         if debug:
 */
-    __pyx_t_1 = __Pyx_PyLong_AddObjC(__pyx_v_w, __pyx_mstate_global->__pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 197, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyLong_AddObjC(__pyx_v_w, __pyx_mstate_global->__pyx_int_1, 1, 1, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 202, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF_SET(__pyx_v_w, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "c_lcg_lh.pyx":198
+    /* "c_lcg_lh.pyx":203
  *     while 1:
  *         w += 1
  *         factorial *= w             # <<<<<<<<<<<<<<
  *         if debug:
  *             print(f"Currently on R = {factorial} ({w}!)\t\t {(factorial % r)*100/factorial} <= {100*alpha}")
 */
-    __pyx_t_1 = PyNumber_InPlaceMultiply(__pyx_v_factorial, __pyx_v_w); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 198, __pyx_L1_error)
+    __pyx_t_1 = PyNumber_InPlaceMultiply(__pyx_v_factorial, __pyx_v_w); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 203, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF_SET(__pyx_v_factorial, __pyx_t_1);
     __pyx_t_1 = 0;
 
-    /* "c_lcg_lh.pyx":199
+    /* "c_lcg_lh.pyx":204
  *         w += 1
  *         factorial *= w
  *         if debug:             # <<<<<<<<<<<<<<
@@ -21894,7 +21953,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
     __pyx_t_2 = (__pyx_v_debug != 0);
     if (__pyx_t_2) {
 
-      /* "c_lcg_lh.pyx":200
+      /* "c_lcg_lh.pyx":205
  *         factorial *= w
  *         if debug:
  *             print(f"Currently on R = {factorial} ({w}!)\t\t {(factorial % r)*100/factorial} <= {100*alpha}")             # <<<<<<<<<<<<<<
@@ -21904,27 +21963,27 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
       __pyx_t_3 = NULL;
       __Pyx_INCREF(__pyx_builtin_print);
       __pyx_t_4 = __pyx_builtin_print; 
-      __pyx_t_5 = __Pyx_PyObject_FormatSimple(__pyx_v_factorial, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_FormatSimple(__pyx_v_factorial, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_6 = __Pyx_PyObject_FormatSimple(__pyx_v_w, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_6 = __Pyx_PyObject_FormatSimple(__pyx_v_w, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_7 = __Pyx_PyLong_From_unsigned_PY_LONG_LONG(__pyx_v_r); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyLong_From_unsigned_PY_LONG_LONG(__pyx_v_r); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_8 = PyNumber_Remainder(__pyx_v_factorial, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_8 = PyNumber_Remainder(__pyx_v_factorial, __pyx_t_7); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = __Pyx_PyLong_MultiplyObjC(__pyx_t_8, __pyx_mstate_global->__pyx_int_100, 0x64, 0, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyLong_MultiplyObjC(__pyx_t_8, __pyx_mstate_global->__pyx_int_100, 0x64, 0, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = __Pyx_PyNumber_Divide(__pyx_t_7, __pyx_v_factorial); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_8 = __Pyx_PyNumber_Divide(__pyx_t_7, __pyx_v_factorial); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_t_7 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_7 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_7);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = PyFloat_FromDouble((100.0 * __pyx_v_alpha)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_8 = PyFloat_FromDouble((100.0 * __pyx_v_alpha)); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_9 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 200, __pyx_L1_error)
+      __pyx_t_9 = __Pyx_PyObject_FormatSimple(__pyx_t_8, __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __pyx_t_10[0] = __pyx_mstate_global->__pyx_kp_u_Currently_on_R;
@@ -21936,7 +21995,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
       __pyx_t_10[6] = __pyx_mstate_global->__pyx_kp_u__8;
       __pyx_t_10[7] = __pyx_t_9;
       __pyx_t_8 = __Pyx_PyUnicode_Join(__pyx_t_10, 8, 17 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_5) + 2 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_6) + 5 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_7) + 4 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_9), 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_5) | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_6) | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_7) | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_9));
-      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 200, __pyx_L1_error)
+      if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 205, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_8);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -21949,12 +22008,12 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
         __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
         __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
         __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 200, __pyx_L1_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 205, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_1);
       }
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "c_lcg_lh.pyx":199
+      /* "c_lcg_lh.pyx":204
  *         w += 1
  *         factorial *= w
  *         if debug:             # <<<<<<<<<<<<<<
@@ -21963,44 +22022,44 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
 */
     }
 
-    /* "c_lcg_lh.pyx":201
+    /* "c_lcg_lh.pyx":206
  *         if debug:
  *             print(f"Currently on R = {factorial} ({w}!)\t\t {(factorial % r)*100/factorial} <= {100*alpha}")
  *         if (factorial % r <= (alpha * factorial)) and (factorial >= r):             # <<<<<<<<<<<<<<
  *             break
  *     return w
 */
-    __pyx_t_1 = __Pyx_PyLong_From_unsigned_PY_LONG_LONG(__pyx_v_r); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyLong_From_unsigned_PY_LONG_LONG(__pyx_v_r); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = PyNumber_Remainder(__pyx_v_factorial, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_4 = PyNumber_Remainder(__pyx_v_factorial, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_alpha); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_alpha); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = PyNumber_Multiply(__pyx_t_1, __pyx_v_factorial); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_8 = PyNumber_Multiply(__pyx_t_1, __pyx_v_factorial); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_8);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyObject_RichCompare(__pyx_t_4, __pyx_t_8, Py_LE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_1 = PyObject_RichCompare(__pyx_t_4, __pyx_t_8, Py_LE); __Pyx_XGOTREF(__pyx_t_1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-    __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_12 < 0))) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_1); if (unlikely((__pyx_t_12 < 0))) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     if (__pyx_t_12) {
     } else {
       __pyx_t_2 = __pyx_t_12;
       goto __pyx_L7_bool_binop_done;
     }
-    __pyx_t_1 = __Pyx_PyLong_From_unsigned_PY_LONG_LONG(__pyx_v_r); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyLong_From_unsigned_PY_LONG_LONG(__pyx_v_r); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_8 = PyObject_RichCompare(__pyx_v_factorial, __pyx_t_1, Py_GE); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_8 = PyObject_RichCompare(__pyx_v_factorial, __pyx_t_1, Py_GE); __Pyx_XGOTREF(__pyx_t_8); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely((__pyx_t_12 < 0))) __PYX_ERR(0, 201, __pyx_L1_error)
+    __pyx_t_12 = __Pyx_PyObject_IsTrue(__pyx_t_8); if (unlikely((__pyx_t_12 < 0))) __PYX_ERR(0, 206, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __pyx_t_2 = __pyx_t_12;
     __pyx_L7_bool_binop_done:;
     if (__pyx_t_2) {
 
-      /* "c_lcg_lh.pyx":202
+      /* "c_lcg_lh.pyx":207
  *             print(f"Currently on R = {factorial} ({w}!)\t\t {(factorial % r)*100/factorial} <= {100*alpha}")
  *         if (factorial % r <= (alpha * factorial)) and (factorial >= r):
  *             break             # <<<<<<<<<<<<<<
@@ -22009,7 +22068,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
 */
       goto __pyx_L4_break;
 
-      /* "c_lcg_lh.pyx":201
+      /* "c_lcg_lh.pyx":206
  *         if debug:
  *             print(f"Currently on R = {factorial} ({w}!)\t\t {(factorial % r)*100/factorial} <= {100*alpha}")
  *         if (factorial % r <= (alpha * factorial)) and (factorial >= r):             # <<<<<<<<<<<<<<
@@ -22020,7 +22079,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
   }
   __pyx_L4_break:;
 
-  /* "c_lcg_lh.pyx":203
+  /* "c_lcg_lh.pyx":208
  *         if (factorial % r <= (alpha * factorial)) and (factorial >= r):
  *             break
  *     return w             # <<<<<<<<<<<<<<
@@ -22031,7 +22090,7 @@ static PyObject *__pyx_f_8c_lcg_lh__calculate_w(unsigned PY_LONG_LONG __pyx_v_r,
   __pyx_r = __pyx_v_w;
   goto __pyx_L0;
 
-  /* "c_lcg_lh.pyx":193
+  /* "c_lcg_lh.pyx":198
  * 
  * 
  * cdef _calculate_w(unsigned long long r, float alpha=0.05, int debug=0):             # <<<<<<<<<<<<<<
@@ -24643,7 +24702,7 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[3] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_c_lcg_lh_pyx, __pyx_mstate->__pyx_n_u_lcg_lh64, __pyx_k_t1A_Qb_9_3a_9_awb_RuTVVW_32T, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[3])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {6, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 149, 263};
+    const __Pyx_PyCode_New_function_description descr = {6, 0, 0, 6, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 149, 302};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_seed, __pyx_mstate->__pyx_n_u_n, __pyx_mstate->__pyx_n_u_minimum, __pyx_mstate->__pyx_n_u_maximum, __pyx_mstate->__pyx_n_u_step, __pyx_mstate->__pyx_n_u_debug};
     __pyx_mstate_global->__pyx_codeobj_tab[4] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_c_lcg_lh_pyx, __pyx_mstate->__pyx_n_u_g_lcg_lh64, __pyx_k_VW_7_7_1_Qa_4z_Rs_1A_8_s_PRRS_0, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[4])) goto bad;
   }
