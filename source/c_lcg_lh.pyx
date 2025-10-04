@@ -146,8 +146,8 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, i
     return lehmer_codes
 
 
-cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, long long minimum,
-                                                long long maximum, int step=1,
+cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, unsigned long long minimum,
+                                                 unsigned long long maximum, int step=1,
                                                int debug = 0):
     """
     LCG_LH implementation for generalized ranges.
@@ -158,7 +158,7 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
     cdef int w = _calculate_w(r)
     cdef unsigned long R = math.factorial(w)
     cdef unsigned long long thresh = R - (R%r)
-    cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
+    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.uint64)
     cdef np.ndarray[np.uint64_t, ndim=2] temp = np.empty((1, w), dtype=np.uint64)
     cdef unsigned long long lehmer
 
