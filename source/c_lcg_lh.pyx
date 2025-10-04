@@ -154,11 +154,11 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
     Underlying LCG range of 2^64.
     """
 
-    cdef unsigned long r = maximum-minimum
+    cdef unsigned long r = maximum-minimum+1
     cdef int w = _calculate_w(r)
     cdef unsigned long R = math.factorial(w)
     cdef unsigned long long thresh = R - (R%r)
-    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = np.empty(shape=1, dtype=np.uint64)
+    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.uint64)
     cdef np.ndarray[np.uint64_t, ndim=2] temp = np.empty((1, w), dtype=np.uint64)
     cdef unsigned long long lehmer
 
@@ -171,18 +171,19 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
 
     while count < n:
-        if debug:
-            print(f"Base sequence: {underl_sequence}")
-
         temp[0] = underl_sequence
 
         lehmer = lehmer = _lehmer_from_ranks(temp)
 
         if lehmer < thresh:
-            lehmer_codes[count] = lehmer
+            lehmer_codes[count] = (lehmer%r) + minimum
             count += 1
 
         seed = underl_sequence[-1]
+        if debug:
+            print(f"Base sequence: {underl_sequence}")
+            print(f"Next seed: {seed}")
+
         # generate the next numbers
         underl_sequence[step:] = lcg64(seed, step)
 
