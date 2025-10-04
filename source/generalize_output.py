@@ -1,5 +1,5 @@
 import c_lcg_lh
-from stat_properties import display_arrays
+from stat_properties import general_display_arrays
 
 
 def max_case_check():
@@ -20,10 +20,10 @@ def max_case_check():
 def g_lcg_lh64_check():
     seed = 123456789
     reps = 10000
-    minimum = 5
-    maximum = 136
+    minimum = -728
+    maximum = 4999
     a_g_lcg_lh64 = c_lcg_lh.g_lcg_lh64(seed, reps, minimum, maximum, 1)
-    display_arrays([("Generalized LCG_LH", a_g_lcg_lh64)], 137)
+    general_display_arrays([("Generalized LCG_LH", a_g_lcg_lh64)], minimum, maximum)
 
 if __name__ == '__main__':
     # max_case_check()
