@@ -20,9 +20,13 @@ def max_case_check():
 def g_lcg_lh64_check():
     seed = 123456789
     reps = 100000
-    minimum = 728
-    maximum = 4999
+    minimum = 0
+    maximum = 719
     a_g_lcg_lh64 = c_lcg_lh.g_lcg_lh64(seed, reps, minimum, maximum, 1)
+    a_lcg_lh64 = c_lcg_lh.lcg_lh64(seed, reps, 6, 1)
+    for i in range(1, reps):
+        if int(a_g_lcg_lh64[i]) != int(a_lcg_lh64[i]):
+            print(f"{i}:\t{a_g_lcg_lh64[i]}\t{a_lcg_lh64[i]}")
     general_display_arrays([("Generalized LCG_LH", a_g_lcg_lh64)], minimum, maximum)
 
 if __name__ == '__main__':
