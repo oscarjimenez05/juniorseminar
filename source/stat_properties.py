@@ -18,7 +18,8 @@ def large_lcg_vs_lcg_lh():
     a_lcg_mod = np.array(list(map(lambda x: x % max_exclusive, a_large_lcg)))
     a_lcg_lh64 = np.array(c_lcg_lh.lcg_lh64(seed, reps, window, window))
     a_csprng = csprng(reps, max_exclusive)
-    display_arrays([("CSPRNG", a_csprng), ("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh64)], max_exclusive)
+    data = [("CSPRNG", a_csprng), ("LCG   ", a_lcg), ("Lm_LCG", a_lcg_mod), ("LCG_LH", a_lcg_lh64)]
+    display_arrays(data, max_exclusive)
 
     # Plot histograms
     plot_distribution(a_csprng, "CSPRNG", 2*9*5)
@@ -26,21 +27,12 @@ def large_lcg_vs_lcg_lh():
     plot_distribution(a_lcg_mod, "Lm_LCG", 2*9*5)
     plot_distribution(a_lcg_lh64, "LCG_LH", 2*9*5)
 
-    # chisq test
     print("-----------------------")
-    counts, _ = np.histogram(a_csprng, bins=max_exclusive, range=(0, max_exclusive))
-    chi2, p = chisquare(counts)
-    print(f"CSPRNG Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
-    counts, _ = np.histogram(a_lcg, bins=max_exclusive, range=(0, max_exclusive))
-    chi2, p = chisquare(counts)
-    print(f"LCG    Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
-    counts, _ = np.histogram(a_lcg_mod, bins=max_exclusive, range=(0, max_exclusive))
-    chi2, p = chisquare(counts)
-    print(f"Lm_LCG Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
-    counts, _ = np.histogram(a_lcg_lh64, bins=max_exclusive, range=(0, max_exclusive))
-    chi2, p = chisquare(counts)
-    print(f"LCG_LH Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
-
+    # chisq test
+    for title, array in data:
+        counts, _ = np.histogram(array, bins=max_exclusive, range=(0, max_exclusive))
+        chi2, p = chisquare(counts)
+        print(f"{title} Chi^2 statistic = {chi2:.2f}, p-value = {p:.5f}")
 
 
 def missing_from_range(lst: [int], start: int, end: int) -> [int]:
@@ -97,26 +89,7 @@ def display_arrays(data: [Tuple[str, list]], max_exclusive: int, plot: bool = Fa
     :param plot: whether to plot the data or not, defaults to False
     :return: None
     """
-    if plot:
-        for title, array in data:
-            plt.plot(array)
-            plt.title(title)
-            plt.xlabel("Index of value generated")
-            plt.ylabel("Value Generated")
-            plt.show()
-
-    print("-----------------------")
-    for title, array in data:
-        print(f"{title} MIN and MAX: " + str(int(array.min())) + ", " + str(int(array.max())))
-    print("-----------------------")
-    for title, array in data:
-        print(f"Not present in {title}: " + str(missing_from_range(array, 0, max_exclusive - 1)))
-    print("-----------------------")
-    exp_mean = (max_exclusive - 1) / 2
-    print("Expec. MEAN: " + str(exp_mean))
-    for title, array in data:
-        mean = array.mean()
-        print(f"{title} MEAN: " + str(mean) + f" (diff. {(exp_mean - mean):.5f})")
+    general_display_arrays(data, 0, max_exclusive-1, plot)
 
 
 def general_display_arrays(data: [Tuple[str, list]], minimum: int, maximum: int, plot: bool = False) -> None:
@@ -158,5 +131,5 @@ def plot_distribution(data, title="Distribution of Values", bins=24):
 
 
 if __name__ == "__main__":
-    #large_lcg_vs_lcg_lh()
-    serial_correlation_comparison()
+    large_lcg_vs_lcg_lh()
+    # serial_correlation_comparison()

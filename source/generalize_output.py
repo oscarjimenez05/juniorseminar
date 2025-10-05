@@ -29,6 +29,7 @@ def g_lcg_lh64_check():
             print(f"{i}:\t{a_g_lcg_lh64[i]}\t{a_lcg_lh64[i]}")
     general_display_arrays([("Generalized LCG_LH", a_g_lcg_lh64)], minimum, maximum)
 
+
 if __name__ == '__main__':
     # max_case_check()
     g_lcg_lh64_check()
