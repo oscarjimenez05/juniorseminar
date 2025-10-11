@@ -156,6 +156,10 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
 
     cdef unsigned long r = maximum-minimum+1
     cdef int w = _calculate_w(r)
+
+    if step == 0:
+        step = w
+
     cdef unsigned long R = math.factorial(w)
     cdef unsigned long long thresh = R - (R%r)
     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.uint64)
@@ -187,7 +191,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
 
         # generate the next numbers
         if step == w:
-            underl_sequence[:] = lcg64(seed, n)
+            underl_sequence[:] = lcg64(seed, w)
         else:
             underl_sequence[:-step] = underl_sequence[step:]
             underl_sequence[-step:] = lcg64(seed, step)
