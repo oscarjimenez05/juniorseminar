@@ -29,7 +29,6 @@ def main():
                 print(f"[WARN] Expected {chunk_size}, got {len(numbers)}", file=sys.stderr)
                 break
 
-
             sys.stdout.buffer.write(struct.pack('<{}I'.format(chunk_size), *numbers))
             sys.stdout.flush()
             seed = int(numbers[-1])
