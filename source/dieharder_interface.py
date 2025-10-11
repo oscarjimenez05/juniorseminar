@@ -11,8 +11,7 @@ def main():
     Generate a fixed number of random 32-bit unsigned integers and write to stdout as binary.
     """
     chunk_size = 4096
-    #total_numbers = 200_000_000
-    total_numbers = 5000000
+    total_numbers = 200_000_000
     seed = 123456789
     maximum = 2 ** 32 - 1
 
