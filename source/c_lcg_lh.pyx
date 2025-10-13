@@ -152,6 +152,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
     """
     LCG_LH implementation for generalized ranges.
     Underlying LCG range of 2^64.
+    It generates only w LCG numbers at a time.
     """
 
     cdef unsigned long r = maximum-minimum+1
@@ -175,8 +176,8 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
 
     while count < n:
+        # this is awkward, repackaging only for one [[range]], should rewrite lehmer fron ranks for this.
         temp[0] = underl_sequence
-
         lehmer = lehmer = _lehmer_from_ranks(temp)
 
         if lehmer < thresh:
