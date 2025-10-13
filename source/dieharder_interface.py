@@ -2,18 +2,71 @@
 import sys
 import struct
 import time
+import argparse
 
 import c_lcg_lh as c
 
+maximum = 2 ** 32 - 1
+seed = 123456789
+chunk_size = 4096
 
-def main():
+
+def output(next_seed, expected):
+    """
+    Outputs numbers to stdout
+    :return: the next seed
+    """
+    numbers = c.g_lcg_lh64(next_seed, expected, 0, maximum, step=0)
+
+    if len(numbers) != expected:
+        print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)
+        raise SystemExit(1)
+
+    sys.stdout.buffer.write(struct.pack('<{}I'.format(expected), *numbers))
+
+    sys.stdout.flush()
+    return int(numbers[-1])
+
+
+def pipe():
+    """
+    Main function to run the PIPE interface for Dieharder.
+    """
+    print(f"--- Dieharder Interface Initialized ---", file=sys.stderr)
+    print(f"Range = [0, {maximum}]", file=sys.stderr)
+    print(f"Chunk size = {chunk_size}", file=sys.stderr)
+    print(f"Starting stream...", file=sys.stderr)
+
+    chunks_sent = 0
+    start_time = time.time()
+    next_seed = seed
+
+    try:
+        while True:
+            next_seed = output(next_seed, chunk_size)
+
+            chunks_sent += 1
+            if chunks_sent % 500 == 0:
+                elapsed = time.time() - start_time
+                rate = (chunks_sent * chunk_size) / elapsed
+                print(f"[INFO] Sent {chunks_sent:,} chunks "
+                      f"({chunks_sent * chunk_size:,} numbers) "
+                      f"at {rate:,.0f} numbers/sec", file=sys.stderr)
+                sys.stderr.flush()
+
+    except BrokenPipeError:
+        print("\n--- Stream closed by Dieharder. Exiting gracefully. ---", file=sys.stderr)
+        sys.stderr.flush()
+    except KeyboardInterrupt:
+        print("\n--- Stream interrupted by user. Exiting. ---", file=sys.stderr)
+        sys.stderr.flush()
+
+
+def file():
     """
     Generate a fixed number of random 32-bit unsigned integers and write to stdout as binary.
     """
-    chunk_size = 4096
     total_numbers = 200_000_000
-    seed = 123456789
-    maximum = 2 ** 32 - 1
 
     print(f"--- Dieharder Fixed Output Interface Initialized ---", file=sys.stderr)
     print(f"Range = [0, {maximum}]", file=sys.stderr)
@@ -24,19 +77,14 @@ def main():
     chunks_sent = 0
     numbers_sent = 0
     start_time = time.time()
+    next_seed = seed
 
     try:
         while numbers_sent < total_numbers:
             remaining = total_numbers - numbers_sent
             current_chunk = min(chunk_size, remaining)
-            numbers = c.g_lcg_lh64(seed, current_chunk, 0, maximum, step=0)
 
-            if len(numbers) != current_chunk:
-                print(f"[WARN] Expected {current_chunk}, got {len(numbers)}", file=sys.stderr)
-                break
-
-            sys.stdout.buffer.write(struct.pack('<{}I'.format(current_chunk), *numbers))
-            seed = int(numbers[-1])
+            next_seed = output(next_seed, current_chunk)
 
             chunks_sent += 1
             numbers_sent += current_chunk
@@ -44,7 +92,8 @@ def main():
             if chunks_sent % 500 == 0:
                 elapsed = time.time() - start_time
                 rate = numbers_sent / elapsed
-                print(f"[INFO] Sent {numbers_sent:,}/{total_numbers:,} numbers "
+                print(f"[INFO] {round(100*numbers_sent/total_numbers, 3)}% "
+                      f"Sent {numbers_sent:,}/{total_numbers:,} numbers "
                       f"({rate:,.0f} nums/sec)", file=sys.stderr)
                 sys.stderr.flush()
 
@@ -55,6 +104,18 @@ def main():
         print("\n--- Stream closed early. Exiting gracefully. ---", file=sys.stderr)
     except KeyboardInterrupt:
         print("\n--- Interrupted by user. Exiting. ---", file=sys.stderr)
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Dieharder Interface.")
+    parser.add_argument("mode", help="(f)ile or (p)ipe.")
+    args = parser.parse_args()
+    if args.mode == 'f':
+        file()
+    elif args.mode == 'p':
+        pipe()
+    else:
+        parser.print_help()
 
 
 if __name__ == "__main__":
