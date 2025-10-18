@@ -176,9 +176,9 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
 
     while count < n:
-        # this is awkward, repackaging only for one [[range]], should rewrite lehmer fron ranks for this.
+        # this is awkward, repackaging only for one [[range]], should rewrite lehmer from ranks for this.
         temp[0] = underl_sequence
-        lehmer = lehmer = _lehmer_from_ranks(temp)
+        lehmer = _lehmer_from_ranks(temp)
 
         if lehmer < thresh:
             lehmer_codes[count] = (lehmer%r) + minimum
