@@ -145,18 +145,34 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, i
     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(windows)
     return lehmer_codes
 
-
 cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long long minimum,
                                                 long long maximum, int step=1,
                                                int debug = 0):
     """
+    This version calculates optimal w
+    :param seed: seed
+    :param n: number of numbers to generate
+    :param minimum: minimum number in desired range (can be negative)
+    :param maximum: maximum number in desired range (can be negative)
+    :param step: sliding window overlap
+    :param debug: whether to print debug statements
+    :return: the array of generated numbers
+    """
+
+    cdef int w = _calculate_w(maximum-minimum+1)
+    return g_lcg_lh64(seed, n, minimum, maximum, w, step, debug)
+
+cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long long minimum,
+                                                long long maximum, int w, int step,
+                                               int debug):
+    """
+    General version which takes all parameters
     LCG_LH implementation for generalized ranges.
     Underlying LCG range of 2^64.
     It generates only w LCG numbers at a time.
     """
 
     cdef long long r = maximum-minimum+1
-    cdef int w = _calculate_w(r)
 
     if step == 0:
         step = w
@@ -198,7 +214,6 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
             underl_sequence[-step:] = lcg64(seed, step)
 
     return lehmer_codes
-
 
 cdef _calculate_w(long long r, float alpha=0.05, int debug=0):
     w = 1
