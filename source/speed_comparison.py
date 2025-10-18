@@ -35,7 +35,7 @@ def speed_test():
 
     # LCG_LH
     start_lcg_lh = time.perf_counter()
-    a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range, window_range) # fully non-overlapping
+    a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range, window_range)  # fully non-overlapping
     end_lcg_lh = time.perf_counter()
     a_lcg_lh = np.array(a_lcg_lh)
     assert len(a_lcg_lh) == reps

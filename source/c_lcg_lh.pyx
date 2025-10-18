@@ -145,7 +145,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, i
     cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(windows)
     return lehmer_codes
 
-cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long long minimum,
+cpdef np.ndarray[np.uint64_t, ndim=1] calc_g_lcg_lh64(long long seed, int n, long long minimum,
                                                 long long maximum, int step=1,
                                                int debug = 0):
     """
@@ -215,7 +215,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
 
     return lehmer_codes
 
-cdef _calculate_w(long long r, float alpha=0.05, int debug=0):
+cdef _calculate_w (long long r, float alpha=0.05, int debug=0):
     w = 1
     factorial = 1.0
     while 1:

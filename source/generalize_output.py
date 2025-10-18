@@ -1,3 +1,6 @@
+import math
+import time
+
 import c_lcg_lh
 from stat_properties import general_display_arrays
 
@@ -30,6 +33,29 @@ def g_lcg_lh64_check():
     general_display_arrays([("Generalized LCG_LH", a_g_lcg_lh64)], minimum, maximum)
 
 
+def good_alpha():
+    seed = 123456789
+    reps = 3_000_000
+    minimum = 0
+    maximum = 20160
+    step = 1
+
+    min_w = 1
+    for i in range(1, 19):
+        if math.factorial(i) >= (maximum - minimum + 1):
+            min_w = i
+            break
+
+    for w in range(min_w, min_w+4):
+        start = time.perf_counter()
+        a = c_lcg_lh.g_lcg_lh64(seed, reps, minimum, maximum, w, step, 0)
+        end = time.perf_counter()
+        assert len(a) == reps
+        t = end - start
+        print(f"time for w={w}: {t} seconds")
+
+
 if __name__ == '__main__':
     # max_case_check()
-    g_lcg_lh64_check()
+    # g_lcg_lh64_check()
+    good_alpha()
