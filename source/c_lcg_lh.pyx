@@ -146,8 +146,8 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, i
     return lehmer_codes
 
 
-cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, unsigned long long minimum,
-                                                 unsigned long long maximum, int step=1,
+cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long long minimum,
+                                                long long maximum, int step=1,
                                                int debug = 0):
     """
     LCG_LH implementation for generalized ranges.
@@ -155,17 +155,17 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
     It generates only w LCG numbers at a time.
     """
 
-    cdef unsigned long r = maximum-minimum+1
+    cdef long long r = maximum-minimum+1
     cdef int w = _calculate_w(r)
 
     if step == 0:
         step = w
 
-    cdef unsigned long R = math.factorial(w)
-    cdef unsigned long long thresh = R - (R%r)
-    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.uint64)
+    cdef long long R = math.factorial(w)
+    cdef long long thresh = R - (R%r)
+    cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
     cdef np.ndarray[np.uint64_t, ndim=2] temp = np.empty((1, w), dtype=np.uint64)
-    cdef unsigned long long lehmer
+    cdef long long lehmer
 
     if step>w:
         print(f"Step {step} greater than window size {w}", sys.stderr)
@@ -200,7 +200,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n,
     return lehmer_codes
 
 
-cdef _calculate_w(unsigned long long r, float alpha=0.05, int debug=0):
+cdef _calculate_w(long long r, float alpha=0.05, int debug=0):
     w = 1
     factorial = 1.0
     while 1:
