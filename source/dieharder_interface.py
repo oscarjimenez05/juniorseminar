@@ -16,7 +16,7 @@ def output(next_seed, expected):
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, step=0)
+    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=0)
 
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)

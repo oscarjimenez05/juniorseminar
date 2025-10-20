@@ -38,7 +38,7 @@ def good_alpha():
     reps = 3_000_000
     minimum = 0
     maximum = 20160
-    step = 1
+    delta = 1
 
     min_w = 1
     for i in range(1, 19):
@@ -48,7 +48,7 @@ def good_alpha():
 
     for w in range(min_w, min_w+4):
         start = time.perf_counter()
-        a = c_lcg_lh.g_lcg_lh64(seed, reps, minimum, maximum, w, step, 0)
+        a = c_lcg_lh.g_lcg_lh64(seed, reps, minimum, maximum, w, delta, 0)
         end = time.perf_counter()
         assert len(a) == reps
         t = end - start

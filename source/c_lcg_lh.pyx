@@ -3,6 +3,7 @@
 
 import numpy as np
 cimport numpy as np
+from fenwick import FenwickTree
 import math
 import sys
 
@@ -121,23 +122,23 @@ cpdef lcg_lh(unsigned long long seed, int n, int w, unsigned long long a=1664525
 
     return lehmer_codes
 
-cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w, int step=1,
+cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w, int delta=1,
                                                int debug = 0):
     """
-    Generates Lehmer codes from a sliding window over an LCG sequence with customizable step.
+    Generates Lehmer codes from a sliding window over an LCG sequence with customizable delta.
     Underlying LCG range of 2^64.
     """
-    if step>w:
-        print(f"Step {step} greater than window size {w}", sys.stderr)
+    if delta>w:
+        print(f"Delta {delta} greater than window size {w}", sys.stderr)
 
-    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, (n - 1) * step + w)
+    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, (n - 1) * delta + w)
 
     cdef np.ndarray[np.uint64_t, ndim=2] windows = np.lib.stride_tricks.sliding_window_view(
-        base_sequence, w, axis=0)[::step]
+        base_sequence, w, axis=0)[::delta]
 
     if debug:
         print(f"Base sequence: {base_sequence}")
-        print(f"Generated windows with steps of {step}: {windows}")
+        print(f"Generated windows with deltas of {delta}: {windows}")
 
     if windows.shape[0] > n:
         windows = windows[:n]
@@ -146,7 +147,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, i
     return lehmer_codes
 
 cpdef np.ndarray[np.uint64_t, ndim=1] calc_g_lcg_lh64(long long seed, int n, long long minimum,
-                                                long long maximum, int step=1,
+                                                long long maximum, int delta=1,
                                                int debug = 0):
     """
     This version calculates optimal w
@@ -154,16 +155,16 @@ cpdef np.ndarray[np.uint64_t, ndim=1] calc_g_lcg_lh64(long long seed, int n, lon
     :param n: number of numbers to generate
     :param minimum: minimum number in desired range (can be negative)
     :param maximum: maximum number in desired range (can be negative)
-    :param step: sliding window overlap
+    :param delta: sliding window overlap
     :param debug: whether to print debug statements
     :return: the array of generated numbers
     """
 
-    cdef int w = _calculate_w(maximum-minimum+1)
-    return g_lcg_lh64(seed, n, minimum, maximum, w, step, debug)
+    cdef int w = _calculate_w(maximum-minimum+1, debug=debug)
+    return g_lcg_lh64(seed, n, minimum, maximum, w, delta, debug)
 
 cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long long minimum,
-                                                long long maximum, int w, int step,
+                                                long long maximum, int w, int delta,
                                                int debug):
     """
     General version which takes all parameters
@@ -174,17 +175,18 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
 
     cdef long long r = maximum-minimum+1
 
-    if step == 0:
-        step = w
+    if delta == 0:
+        delta = w
 
+    cdef unsigned long long *factorials = get_factorials()
     cdef long long R = math.factorial(w)
     cdef long long thresh = R - (R%r)
     cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
     cdef np.ndarray[np.uint64_t, ndim=2] temp = np.empty((1, w), dtype=np.uint64)
     cdef long long lehmer
 
-    if step>w:
-        print(f"Step {step} greater than window size {w}", sys.stderr)
+    if delta>w:
+        print(f"Delta {delta} greater than window size {w}", sys.stderr)
 
     # this will count the number of final numbers in the array
     count = 0
@@ -207,13 +209,24 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
             print(f"Next seed: {seed}")
 
         # generate the next numbers
-        if step == w:
+        if delta == w:
             underl_sequence[:] = lcg64(seed, w)
         else:
-            underl_sequence[:-step] = underl_sequence[step:]
-            underl_sequence[-step:] = lcg64(seed, step)
+            underl_sequence[:-delta] = underl_sequence[delta:]
+            underl_sequence[-delta:] = lcg64(seed, delta)
 
+    free(factorials)
     return lehmer_codes
+
+
+cdef get_factorials(int w):
+    cdef unsigned long long * factorials = <unsigned long long *> malloc(w * sizeof(unsigned long long))
+    if not factorials:
+        raise MemoryError()
+    cdef int i
+    for i in range(w):
+        factorials[i] = math.factorial(w - i - 1)
+    return factorials
 
 cdef _calculate_w (long long r, float alpha=0.05, int debug=0):
     w = 1
