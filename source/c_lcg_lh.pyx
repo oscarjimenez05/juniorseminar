@@ -6,6 +6,7 @@ cimport numpy as np
 from fenwick import FenwickTree
 import math
 import sys
+import fenwick
 
 from libc.stdlib cimport malloc, free
 
@@ -178,11 +179,10 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
     if delta == 0:
         delta = w
 
-    cdef unsigned long long *factorials = get_factorials()
+    cdef long long *factorials = get_factorials()
     cdef long long R = math.factorial(w)
     cdef long long thresh = R - (R%r)
     cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
-    cdef np.ndarray[np.uint64_t, ndim=2] temp = np.empty((1, w), dtype=np.uint64)
     cdef long long lehmer
 
     if delta>w:
@@ -194,9 +194,15 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
 
     while count < n:
-        # this is awkward, repackaging only for one [[range]], should rewrite lehmer from ranks for this.
-        temp[0] = underl_sequence
-        lehmer = _lehmer_from_ranks(temp)
+
+        if (1):
+            # lehmer update
+            lehmer = 0
+            pass
+
+        else:
+            # lehmer from scratch
+            lehmer = 0
 
         if lehmer < thresh:
             lehmer_codes[count] = (lehmer%r) + minimum
@@ -220,7 +226,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
 
 
 cdef get_factorials(int w):
-    cdef unsigned long long * factorials = <unsigned long long *> malloc(w * sizeof(unsigned long long))
+    cdef long long * factorials = <long long *> malloc(w * sizeof(long long))
     if not factorials:
         raise MemoryError()
     cdef int i
