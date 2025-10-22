@@ -14,8 +14,8 @@ def shannon_entropy(seq: [int]):
     return entropy
 
 
-def speed_test():
-    reps = 100000
+def speed_test(disp = False):
+    reps = 1_000_000
     window_range = 6
     seed = 123456789
 
@@ -35,7 +35,7 @@ def speed_test():
 
     # LCG_LH
     start_lcg_lh = time.perf_counter()
-    a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range, window_range)  # fully non-overlapping
+    a_lcg_lh = c_lcg_lh.calc_g_lcg_lh64(seed, reps, 0, max_exclusive-1, 1, 1)  # fully non-overlapping
     end_lcg_lh = time.perf_counter()
     a_lcg_lh = np.array(a_lcg_lh)
     assert len(a_lcg_lh) == reps
@@ -51,11 +51,12 @@ def speed_test():
     print("Average time for LCG_LH: " + str((end_lcg_lh - start_lcg_lh) / reps))
     print("Average time for MRW_TW: " + str((end_mrs_tw - start_mrs_tw) / reps))
 
-    display_arrays([("CSPRNG", a_csprng),
-                    ("LCG   ", a_lcg),
-                    ("LCG_LH", a_lcg_lh),
-                    ("MRS_TW", a_mrs_tw)],
-                   max_exclusive, True)
+    if disp:
+        display_arrays([("CSPRNG", a_csprng),
+                        ("LCG   ", a_lcg),
+                        ("LCG_LH", a_lcg_lh),
+                        ("MRS_TW", a_mrs_tw)],
+                       max_exclusive, True)
 
 
 def compare_cython_speed():
@@ -127,7 +128,7 @@ def compare_window_size_speed():
 
 
 if __name__ == "__main__":
-    # speed_test()
+    speed_test()
     # compare_cython_speed()
     # compare_overlap_speed()
-    compare_window_size_speed()
+    # compare_window_size_speed()

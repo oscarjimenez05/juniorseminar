@@ -194,15 +194,16 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
 
     while count < n:
+        # lehmer from scratch
+        lehmer = 0
+        cdef long long i, j, smaller
 
-        if (1):
-            # lehmer update
-            lehmer = 0
-            pass
-
-        else:
-            # lehmer from scratch
-            lehmer = 0
+        for i in range(w):
+            smaller = 0
+            for j in range(i + 1, w):
+                if underl_sequence[j] < underl_sequence[i]:
+                    smaller += 1
+            lehmer += smaller * factorials[w - 1 - i]
 
         if lehmer < thresh:
             lehmer_codes[count] = (lehmer%r) + minimum
