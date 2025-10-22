@@ -164,7 +164,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] calc_g_lcg_lh64(long long seed, int n, lon
     cdef int w = _calculate_w(maximum-minimum+1, debug=debug)
     return g_lcg_lh64(seed, n, minimum, maximum, w, delta, debug)
 
-cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long long minimum,
+cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, long long minimum,
                                                 long long maximum, int w, int delta,
                                                int debug):
     """
@@ -179,11 +179,12 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
     if delta == 0:
         delta = w
 
-    cdef long long *factorials = get_factorials()
-    cdef long long R = math.factorial(w)
-    cdef long long thresh = R - (R%r)
+    cdef unsigned long long *factorials = get_factorials(w)
+    cdef unsigned long long R = math.factorial(w)
+    cdef unsigned long long thresh = R - (R%r)
     cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
     cdef long long lehmer
+    cdef long long i, j, smaller
 
     if delta>w:
         print(f"Delta {delta} greater than window size {w}", sys.stderr)
@@ -196,7 +197,6 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
     while count < n:
         # lehmer from scratch
         lehmer = 0
-        cdef long long i, j, smaller
 
         for i in range(w):
             smaller = 0
@@ -226,8 +226,8 @@ cpdef np.ndarray[np.uint64_t, ndim=1] g_lcg_lh64(long long seed, int n, long lon
     return lehmer_codes
 
 
-cdef get_factorials(int w):
-    cdef long long * factorials = <long long *> malloc(w * sizeof(long long))
+cdef unsigned long long* get_factorials(int w):
+    cdef unsigned long long * factorials = <unsigned long long *> malloc(w * sizeof(unsigned long long))
     if not factorials:
         raise MemoryError()
     cdef int i
@@ -235,7 +235,7 @@ cdef get_factorials(int w):
         factorials[i] = math.factorial(w - i - 1)
     return factorials
 
-cdef _calculate_w (long long r, float alpha=0.05, int debug=0):
+cdef _calculate_w (long long r, int debug=0, float alpha=0.05):
     w = 1
     factorial = 1.0
     while 1:
