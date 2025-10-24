@@ -37,19 +37,6 @@ def xorshift(seed, n) -> [int]:
     return result
 
 
-# def _rel_ord(sequence: [int], w: int) -> [[int]]:
-#     """
-#     FASTEST
-#     Generates all relative orderings for a sequence (not Lehmer codes)
-#     param sequence ([int]): the plain PRNG sequence
-#     param w (int): window length
-#     """
-#     arr = np.asarray(sequence)
-#     windows = sliding_window_view(arr, w)
-#     ranks = np.argsort(np.argsort(windows, axis=1), axis=1)
-#     return ranks
-
-
 def _lehmer_from_ranks(rank_lists: [[int]]) -> [int]:
     n = len(rank_lists[0])
     factorials = [math.factorial(n - i - 1) for i in range(n)]
@@ -85,6 +72,11 @@ def mrs_tw(seed: int, reps: int, max_exclusive: int):
     for i in range(reps):
         a_mrs_tw[i] = random.randint(0, max_exclusive - 1)
     return a_mrs_tw
+
+
+def pcg64(seed: int, reps: int, max_exclusive: int):
+    np.random.seed(seed)
+    return np.random.randint(0, max_exclusive, size=reps)
 
 
 if __name__ == '__main__':

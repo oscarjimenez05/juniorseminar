@@ -14,7 +14,7 @@ def shannon_entropy(seq: [int]):
     return entropy
 
 
-def speed_test(disp = False):
+def speed_test(disp=False):
     reps = 1_000_000
     window_range = 6
     seed = 123456789
@@ -47,10 +47,17 @@ def speed_test(disp = False):
     end_mrs_tw = time.perf_counter()
     assert len(a_mrs_tw) == reps
 
+    # PCG64
+    start_pcg64 = time.perf_counter()
+    a_pcg64 = pcg64(seed, reps, max_exclusive)
+    end_pcg64 = time.perf_counter()
+    assert len(a_pcg64) == reps
+
     print("Average time for CSPRNG: " + str((end_csprng - start_csprng) / reps))
     print("Average time for LCG   : " + str((end_lcg - start_lcg) / reps))
     print("Average time for LCG_LH: " + str((end_lcg_lh - start_lcg_lh) / reps))
     print("Average time for MRW_TW: " + str((end_mrs_tw - start_mrs_tw) / reps))
+    print("Average time for PCG_64: " + str((end_pcg64 - start_pcg64) / reps))
 
     if disp:
         display_arrays([("CSPRNG", a_csprng),

@@ -7,7 +7,7 @@ import argparse
 import c_lcg_lh as c
 
 maximum = 2 ** 32 - 1
-seed = 1931571603
+seed = 123456789
 chunk_size = 4096
 
 
