@@ -51,7 +51,7 @@ cpdef np.ndarray[np.uint64_t, ndim=1] lcg64(unsigned long long seed, int n):
     cdef unsigned long long x = seed
     cdef int i
     for i in range(n):
-        x = ( a * x + c) & 0xFFFFFFFFFFFFFFFF
+        x = ( a * x + c)
         result[i] = x
     return result
 
@@ -203,7 +203,7 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
             for j in range(i + 1, w):
                 if underl_sequence[j] < underl_sequence[i]:
                     smaller += 1
-            lehmer += smaller * factorials[w - 1 - i]
+            lehmer += smaller * factorials[i]
 
         if lehmer < thresh:
             lehmer_codes[count] = (lehmer%r) + minimum
