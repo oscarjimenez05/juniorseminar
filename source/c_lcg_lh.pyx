@@ -3,10 +3,8 @@
 
 import numpy as np
 cimport numpy as np
-from fenwick import FenwickTree
 import math
 import sys
-import fenwick
 from libc.string cimport memmove
 # from libc.sizeof cimport sizeof
 
