@@ -7,6 +7,8 @@ from fenwick import FenwickTree
 import math
 import sys
 import fenwick
+from libc.string cimport memmove
+# from libc.sizeof cimport sizeof
 
 from libc.stdlib cimport malloc, free
 
@@ -179,6 +181,9 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
     if delta == 0:
         delta = w
 
+    cdef unsigned long long lcg_a = 6364136223846793005
+    cdef unsigned long long lcg_c = 1442695040888963407
+
     cdef unsigned long long *factorials = get_factorials(w)
     cdef unsigned long long R = math.factorial(w)
     cdef unsigned long long thresh = R - (R%r)
@@ -188,11 +193,13 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
 
     if delta>w:
         print(f"Delta {delta} greater than window size {w}", sys.stderr)
+        exit(1)
 
     # this will count the number of final numbers in the array
     count = 0
 
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
+    cdef unsigned long long * underl_ptr = &underl_sequence[0]
 
     while count < n:
         # lehmer from scratch
@@ -201,7 +208,7 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
         for i in range(w):
             smaller = 0
             for j in range(i + 1, w):
-                if underl_sequence[j] < underl_sequence[i]:
+                if underl_ptr[j] < underl_ptr[i]:
                     smaller += 1
             lehmer += smaller * factorials[i]
 
@@ -209,7 +216,7 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
             lehmer_codes[count] = (lehmer%r) + minimum
             count += 1
 
-        seed = underl_sequence[-1]
+        seed = underl_ptr[w - 1]
 
         if debug:
             print(f"Base sequence: {underl_sequence}")
@@ -217,10 +224,18 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
 
         # generate the next numbers
         if delta == w:
-            underl_sequence[:] = lcg64(seed, w)
+            for i in range(w):
+                seed = (lcg_a * seed + lcg_c)
+                underl_ptr[i] = seed
         else:
-            underl_sequence[:-delta] = underl_sequence[delta:]
-            underl_sequence[-delta:] = lcg64(seed, delta)
+            memmove(underl_ptr,  # dest: start of buffer
+                    underl_ptr + delta,  # source: 'delta' elements in
+                    (w - delta) * sizeof(unsigned long long))  # num bytes
+
+            # generate delta new numbers to fill until end of the buffer.
+            for i in range(w - delta, w):
+                seed = (lcg_a * seed + lcg_c)
+                underl_ptr[i] = seed
 
     free(factorials)
     return lehmer_codes
