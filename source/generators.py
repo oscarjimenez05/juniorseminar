@@ -76,7 +76,7 @@ def mrs_tw(seed: int, reps: int, max_exclusive: int):
 
 def pcg64(seed: int, reps: int, max_exclusive: int):
     np.random.seed(seed)
-    return np.random.randint(0, max_exclusive, size=reps)
+    return np.random.randint(max_exclusive, size=reps)
 
 
 if __name__ == '__main__':
