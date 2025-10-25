@@ -164,18 +164,16 @@ cpdef np.ndarray[np.uint64_t, ndim=1] calc_g_lcg_lh64(long long seed, int n, lon
     cdef int w = _calculate_w(maximum-minimum+1, debug=debug)
     return g_lcg_lh64(seed, n, minimum, maximum, w, delta, debug)
 
+
 @cython.boundscheck(False)
-@cython.nonecheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
-cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, long long minimum,
-                                                long long maximum, int w, int delta,
-                                               int debug):
+@cython.nonecheck(False)
+cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
+        unsigned long long seed, int n, long long minimum,
+        long long maximum, int w, int delta, int debug):
     """
-    General version which takes all parameters
-    LCG_LH implementation for generalized ranges.
-    Underlying LCG range of 2^64.
-    It generates only w LCG numbers at a time.
+    Internal C-level function.
     """
 
     cdef long long r = maximum-minimum+1
@@ -191,15 +189,15 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
     cdef unsigned long long thresh = R - (R%r)
     cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
     cdef np.int64_t * lehmer_codes_ptr = &lehmer_codes[0]
-    cdef long long lehmer
+
+    cdef unsigned long long lehmer
     cdef int i, j, smaller
+    # this will count the number of final numbers in the array
+    cdef int count = 0
 
     if delta>w:
         print(f"Delta {delta} greater than window size {w}", sys.stderr)
         exit(1)
-
-    # this will count the number of final numbers in the array
-    count = 0
 
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
     cdef unsigned long long * underl_ptr = &underl_sequence[0]
@@ -213,7 +211,7 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
             for j in range(i + 1, w):
                 if underl_ptr[j] < underl_ptr[i]:
                     smaller += 1
-            lehmer += smaller * factorials[i]
+            lehmer += <unsigned long long> smaller * factorials[i]
 
         if lehmer < thresh:
             lehmer_codes_ptr[count] = (lehmer%r) + minimum
@@ -242,6 +240,18 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
 
     free(factorials)
     return lehmer_codes
+
+cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, long long minimum,
+                                                long long maximum, int w, int delta,
+                                                int debug):
+    """
+    General version which takes all parameters
+    LCG-LH implementation for generalized ranges.
+    It generates only w LCG numbers at a time.
+
+    This is now a thin wrapper around the C-level '__g_lcg_lh64_internal'
+    """
+    return __g_lcg_lh64_internal(seed, n, minimum, maximum, w, delta, debug)
 
 
 cdef unsigned long long* get_factorials(int w):
