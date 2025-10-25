@@ -202,16 +202,63 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
     cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
     cdef unsigned long long * underl_ptr = &underl_sequence[0]
 
+    # for incremental updates
+    cdef bint is_initialized = 0
+    cdef long long * previous_digits = <long long *> malloc((w - 1) * sizeof(long long))
+    cdef long long * current_digits = <long long *> malloc((w - 1) * sizeof(long long))
+    if not previous_digits or not current_digits:
+        raise MemoryError()
+    cdef long long * temp_ptr
+    cdef long long new_digit
+
     while count < n:
         # lehmer from scratch
-        lehmer = 0
+        if delta == w or (not is_initialized):
+            lehmer = 0
+            is_initialized = 1
+            for i in range(w):
+                smaller = 0
+                for j in range(i + 1, w):
+                    if underl_ptr[j] < underl_ptr[i]:
+                        smaller += 1
 
-        for i in range(w):
-            smaller = 0
-            for j in range(i + 1, w):
-                if underl_ptr[j] < underl_ptr[i]:
-                    smaller += 1
-            lehmer += <unsigned long long> smaller * factorials[i]
+                # storing digits for recomputation
+                if i < w - 1:
+                    previous_digits[i] = smaller
+                lehmer += <unsigned long long> smaller * factorials[i]
+
+        # update lehmer, not from scratch
+        else:
+            lehmer = 0
+
+            # update the surviving digits
+            for i in range(w - delta):
+                new_digit = previous_digits[i + delta]
+
+                # O(w) pass for each of the new ones
+                for k in range(w - delta, w):
+                    if underl_ptr[k] < underl_ptr[i]:
+                        new_digit += 1
+
+                current_digits[i] = new_digit
+                lehmer += <unsigned long long> new_digit * factorials[i]
+
+            # delta new digits from scratch
+            for i in range(w - delta, w):
+                smaller = 0
+                for j in range(i + 1, w):
+                    if underl_ptr[j] < underl_ptr[i]:
+                        smaller += 1
+
+                current_digits[i] = smaller
+                lehmer += <unsigned long long> smaller * factorials[i]
+
+            # swap buffers
+            temp_ptr = previous_digits
+            previous_digits = current_digits
+            current_digits = temp_ptr
+
+        ########## check for bounds
 
         if lehmer < thresh:
             lehmer_codes_ptr[count] = (lehmer%r) + minimum
@@ -223,7 +270,7 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
             print(f"Base sequence: {underl_sequence}")
             print(f"Next seed: {seed}")
 
-        # generate the next numbers
+        ########## generate the next numbers
         if delta == w:
             for i in range(w):
                 seed = (lcg_a * seed + lcg_c)
@@ -238,6 +285,8 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
                 seed = (lcg_a * seed + lcg_c)
                 underl_ptr[i] = seed
 
+    free(previous_digits)
+    free(current_digits)
     free(factorials)
     return lehmer_codes
 
