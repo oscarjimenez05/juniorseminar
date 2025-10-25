@@ -164,6 +164,10 @@ cpdef np.ndarray[np.uint64_t, ndim=1] calc_g_lcg_lh64(long long seed, int n, lon
     cdef int w = _calculate_w(maximum-minimum+1, debug=debug)
     return g_lcg_lh64(seed, n, minimum, maximum, w, delta, debug)
 
+@cython.boundscheck(False)
+@cython.nonecheck(False)
+@cython.wraparound(False)
+@cython.cdivision(True)
 cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, long long minimum,
                                                 long long maximum, int w, int delta,
                                                int debug):
@@ -186,8 +190,9 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
     cdef unsigned long long R = math.factorial(w)
     cdef unsigned long long thresh = R - (R%r)
     cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
+    cdef np.int64_t * lehmer_codes_ptr = &lehmer_codes[0]
     cdef long long lehmer
-    cdef long long i, j, smaller
+    cdef int i, j, smaller
 
     if delta>w:
         print(f"Delta {delta} greater than window size {w}", sys.stderr)
@@ -211,7 +216,7 @@ cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, 
             lehmer += smaller * factorials[i]
 
         if lehmer < thresh:
-            lehmer_codes[count] = (lehmer%r) + minimum
+            lehmer_codes_ptr[count] = (lehmer%r) + minimum
             count += 1
 
         seed = underl_ptr[w - 1]
