@@ -9,6 +9,7 @@ import c_lcg_lh as c
 maximum = 2 ** 32 - 1
 seed = 123456789
 chunk_size = 4096
+debug = 1
 
 
 def output(next_seed, expected):
@@ -16,13 +17,17 @@ def output(next_seed, expected):
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=0)
+    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=0, debug=debug)
 
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)
         raise SystemExit(1)
 
     sys.stdout.buffer.write(struct.pack('<{}I'.format(expected), *numbers))
+
+    if debug:
+        for num in numbers:
+            print(num, file=sys.stderr)
 
     sys.stdout.flush()
     return int(numbers[-1])

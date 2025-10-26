@@ -232,7 +232,7 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
             lehmer = 0
 
             # update the surviving digits
-            for i in range(w - delta):
+            for i in range(w - delta - 1):
                 new_digit = previous_digits[i + delta]
 
                 # O(w) pass for each of the new ones
@@ -244,7 +244,7 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
                 lehmer += <unsigned long long> new_digit * factorials[i]
 
             # delta new digits from scratch
-            for i in range(w - delta, w):
+            for i in range(w - delta - 1, w):
                 smaller = 0
                 for j in range(i + 1, w):
                     if underl_ptr[j] < underl_ptr[i]:
@@ -269,6 +269,10 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
         if debug:
             print(f"Base sequence: {underl_sequence}")
             print(f"Next seed: {seed}")
+            print(f"Lehmer code: {lehmer}")
+            py_prev_digits = [previous_digits[i] for i in range(w - 1)]
+            print(f"Previous digits: {py_prev_digits}")
+            print("\n----------\n")
 
         ########## generate the next numbers
         if delta == w:
