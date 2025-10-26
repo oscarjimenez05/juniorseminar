@@ -8,8 +8,8 @@ import c_lcg_lh as c
 
 maximum = 2 ** 32 - 1
 seed = 123456789
-chunk_size = 4096
-debug = 1
+chunk_size = 8192
+debug = 0
 
 
 def output(next_seed, expected):
@@ -17,7 +17,7 @@ def output(next_seed, expected):
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=0, debug=debug)
+    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=4, debug=debug)
 
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)

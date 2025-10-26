@@ -204,8 +204,8 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
 
     # for incremental updates
     cdef bint is_initialized = 0
-    cdef long long * previous_digits = <long long *> malloc((w - 1) * sizeof(long long))
-    cdef long long * current_digits = <long long *> malloc((w - 1) * sizeof(long long))
+    cdef long long * previous_digits = <long long *> malloc(w * sizeof(long long))
+    cdef long long * current_digits = <long long *> malloc(w * sizeof(long long))
     if not previous_digits or not current_digits:
         raise MemoryError()
     cdef long long * temp_ptr
