@@ -7,7 +7,7 @@ import argparse
 import c_lcg_lh as c
 
 maximum = 2 ** 32 - 1
-seed = 123456789
+seed = 1931571603
 chunk_size = 8192
 debug = 0
 
@@ -17,7 +17,7 @@ def output(next_seed, expected):
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=4, debug=debug)
+    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=7, debug=debug)
 
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)
@@ -51,7 +51,7 @@ def pipe():
             next_seed = output(next_seed, chunk_size)
 
             chunks_sent += 1
-            if chunks_sent % 500 == 0:
+            if chunks_sent % 2000 == 0:
                 elapsed = time.time() - start_time
                 rate = (chunks_sent * chunk_size) / elapsed
                 print(f"[INFO] Sent {chunks_sent:,} chunks "

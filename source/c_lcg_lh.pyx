@@ -269,7 +269,8 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
         if debug:
             print(f"Base sequence: {underl_sequence}")
             print(f"Next seed: {seed}")
-            print(f"Lehmer code: {lehmer}")
+            print(f"Lehmer code: {lehmer} (valid? {lehmer<thresh})")
+            print(f"Lehmer code adjusted for range: {(lehmer%r) + minimum})")
             py_prev_digits = [previous_digits[i] for i in range(w - 1)]
             print(f"Previous digits: {py_prev_digits}")
             print("\n----------\n")
