@@ -6,7 +6,7 @@ for ID in $TEST_IDS; do
   echo "---"
   echo "### RUNNING DIEHARDER TEST $ID ###"
   echo "---"
-  python3 dieharder_interface.py p | dieharder -g 200 -d $ID > 1931571603test$ID.txt
+  python3 dieharder_interface.py p | dieharder -g 200 -d $ID > 32_shift_1931571603test$ID.txt
 done
 
 echo "---"
