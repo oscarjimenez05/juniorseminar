@@ -1,3 +1,4 @@
+import math
 from collections import Counter
 import time
 from generators import *
@@ -115,17 +116,24 @@ def compare_overlap_speed():
     plt.show()
 
 
-def compare_window_size_speed():
-    reps = 1000000
+def calc_alpha_star():
+    reps = 1_000_000
     seed = 123456789
     times = []
-    for i in range(2, 18):
+    for i in range(2, 19):
         start = time.perf_counter()
-        a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, i, i)
+        a_lcg_lh = c_lcg_lh.g_lcg_lh64(seed, reps, 0, math.factorial(i) // 2, i, 0, 0)
         end = time.perf_counter()
         a_lcg_lh = np.array(a_lcg_lh)
         assert len(a_lcg_lh) == reps
         times.append(end - start)
+
+    print("w\tL(w)\t\tL(w+1)\t\ta*")
+    for i in range(len(times) - 1):
+        L_w = (i + 2) * (i + 1) / 2
+        L_w1 = (i + 3) * (i + 2) / 2
+        alpha_star = (times[i + 1] - times[i]) / (L_w1 - L_w)
+        print(f"{i + 2}\t{times[i]:.6f}\t{times[i + 1]:.6f}\t{alpha_star:.6f}")
 
     x = np.arange(len(times))
     slope, intercept = np.polyfit(x, times, 1)
@@ -135,8 +143,26 @@ def compare_window_size_speed():
     plt.show()
 
 
+def compare_window_sizes():
+    reps = 1_000_000
+    seed = 123456789
+    print("w,r,R,TotalTime,alpha")
+    for i in range(2, 19):
+        r = math.factorial(i) // 2 + 1
+        for j in range(2, 19):
+            if math.factorial(j) >= r:
+                start = time.perf_counter()
+                a_lcg_lh = c_lcg_lh.g_lcg_lh64(seed, reps, 1, r, j, 0, 0)
+                end = time.perf_counter()
+                a_lcg_lh = np.array(a_lcg_lh)
+                assert len(a_lcg_lh) == reps
+                avg_time = (end - start)
+                print(f"{i},{r},{j},{avg_time:.6f},{(math.factorial(j)%r)/math.factorial(j):.6f}")
+
+
 if __name__ == "__main__":
-    speed_test()
+    # speed_test()
     # compare_cython_speed()
     # compare_overlap_speed()
-    # compare_window_size_speed()
+    calc_alpha_star()
+    # compare_window_sizes()
