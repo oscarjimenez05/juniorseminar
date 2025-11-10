@@ -148,7 +148,7 @@ def compare_window_sizes():
     seed = 123456789
     print("w,r,R,TotalTime,alpha")
     for i in range(2, 19):
-        r = math.factorial(i) // 2 + 1
+        r = 2 * math.factorial(i) // 3
         for j in range(2, 19):
             if math.factorial(j) >= r:
                 start = time.perf_counter()
@@ -164,5 +164,5 @@ if __name__ == "__main__":
     # speed_test()
     # compare_cython_speed()
     # compare_overlap_speed()
-    calc_alpha_star()
-    # compare_window_sizes()
+    # calc_alpha_star()
+    compare_window_sizes()
