@@ -1,11 +1,74 @@
 import random
 import math
 import secrets
+from sys import stderr
 
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
-from c_lcg_lh import lcg_lh64
 
+def get_factorials(w):
+    factorials = []
+    for i in range(w):
+        factorials.append(math.factorial(w - i - 1))
+    return factorials
+
+
+def lehmerize_sequence(sequence, n, minimum, maximum, w, delta, debug=0):
+    r = maximum-minimum+1
+
+    if delta == 0:
+        delta = w
+
+    factorials = get_factorials(w)
+    R = math.factorial(w)
+    thresh = R - (R%r)
+    lehmer_codes = np.empty(shape=n, dtype=np.int64)
+
+    # this will count the number of final numbers in the array
+    count = 0
+
+    if delta>w:
+        print(f"Delta {delta} greater than window size {w}", stderr)
+        exit(1)
+
+    start = 0
+    end = w
+
+    seq_len = len(sequence)
+    if seq_len < w:
+        print(f"Sequence (len {seq_len}) is too short for window size {w}.", stderr)
+        return np.array([], dtype=np.int64)  # Return empty array
+
+    underl_sequence = sequence[:end]
+
+    while count < n and end <= seq_len:
+        # lehmer from scratch
+        lehmer = 0
+        is_initialized = 1
+        for i in range(w-1):
+            smaller = 0
+            for j in range(i + 1, w):
+                if underl_sequence[j] < underl_sequence[i]:
+                    smaller += 1
+            lehmer += smaller * factorials[i]
+
+        if lehmer < thresh:
+            lehmer_codes[count] = (lehmer%r) + minimum
+            count += 1
+
+        if debug:
+            print(f"Base sequence: {underl_sequence}")
+            print(f"Lehmer code: {lehmer} (valid? {lehmer<thresh})")
+            print(f"Lehmer code adjusted for range: {(lehmer%r) + minimum})")
+            print("\n----------\n")
+
+        start += delta
+        end += delta
+
+        if end <= seq_len:
+            underl_sequence = sequence[start:end]
+
+    return lehmer_codes[:count]
 
 def lcg(seed: int, n: int, a=1664525, c=1013904223, m=2 ** 32) -> [int]:
     """
@@ -80,4 +143,6 @@ def pcg64(seed: int, reps: int, max_exclusive: int):
 
 
 if __name__ == '__main__':
-    print(lcg_lh64(42, 10, 4, 2))
+    # print(lcg_lh64(42, 10, 4, 2))
+    sequence = [7,6,5,2,1,6,2,6,8,1,0,3,5,4,9]
+    print(lehmerize_sequence(sequence, 5, 1, 6, 3, 0, 1))
