@@ -3,7 +3,7 @@ import math
 import secrets
 from sys import stderr
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 from numpy.lib.stride_tricks import sliding_window_view
 
@@ -145,13 +145,13 @@ if __name__ == '__main__':
     # print(lcg_lh64(42, 10, 4, 2))
     normal_sequence = random_numbers_array = np.random.normal(loc=100, scale=15, size=1000000)
     normal_sequence = np.round(normal_sequence).astype(int)
-    plt.hist(normal_sequence)
-    plt.show()
+    # plt.hist(normal_sequence)
+    # plt.show()
     mini = 0
     maxi = 119
     w = 6
     lehmer = lehmerize_sequence(normal_sequence, 1000000, mini, maxi, w, 0, 0)
     print(min(lehmer))
     print(max(lehmer))
-    plt.hist(lehmer, bins=np.arange(mini -0.5, maxi+0.5, 1))
-    plt.show()
+    # plt.hist(lehmer, bins=np.arange(mini -0.5, maxi+0.5, 1))
+    # plt.show()

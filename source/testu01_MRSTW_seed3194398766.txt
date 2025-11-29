@@ -1,0 +1,68 @@
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+                 Starting Crush
+                 Version: TestU01 1.2.3
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+
+***********************************************************
+Test smarsa_SerialOver calling smultin_MultinomialOver
+
+***********************************************************
+HOST = DESKTOP-4M1PN36, Linux
+
+pipe_gen
+
+
+smultin_MultinomialOver test:
+-----------------------------------------------
+   N =  1,  n = 500000000,  r =  0,   d = 4096,   t =  2,
+       Sparse =  FALSE
+
+       GenerCell = smultin_GenerCellSerial
+       Number of cells = d^t =           16777216
+       Expected number per cell =   29.802322
+       Hashing =  FALSE
+
+   For Delta > -1, we use the ChiSquare approximation
+   Correction factor of the ChiSquare: 
+       Delta =     1,    Mu =     0.01677312,    Sigma =          1
+
+-----------------------------------------------
+Test Results for Delta =   1.0000
+
+Number of degrees of freedom          : 16773120
+Value of the statistic                : 2.84e+7
+p-value of test                       :   eps      *****
+
+
+-----------------------------------------------
+CPU time used                    :  00:00:23.82
+
+Generator state:
+
+
+
+
+***********************************************************
+Test smarsa_SerialOver calling smultin_MultinomialOver
+
+***********************************************************
+HOST = DESKTOP-4M1PN36, Linux
+
+pipe_gen
+
+
+smultin_MultinomialOver test:
+-----------------------------------------------
+   N =  1,  n = 300000000,  r =  0,   d =   64,   t =  4,
+       Sparse =  FALSE
+
+       GenerCell = smultin_GenerCellSerial
+       Number of cells = d^t =           16777216
+       Expected number per cell =   17.881393
+       Hashing =  FALSE
+
+   For Delta > -1, we use the ChiSquare approximation
+   Correction factor of the ChiSquare: 
+       Delta =     1,    Mu =    0.027525119,    Sigma =          1
+

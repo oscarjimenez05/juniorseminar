@@ -25,7 +25,7 @@ int main(void) {
 
 	unif01_Gen *gen = unif01_CreateExternGenBits("pipe_gen", read32);
 
-	bbattery_BigCrush(gen);
+	bbattery_Crush(gen);
 	unif01_DeleteExternGenBits(gen);
 	return 0;
 }
