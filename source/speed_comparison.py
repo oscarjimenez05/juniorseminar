@@ -102,7 +102,7 @@ def compare_overlap_speed():
     times = []
     for i in range(1, window_range+1):
         start = time.perf_counter()
-        a_lcg_lh = c_lcg_lh.lcg_lh64(seed, reps, window_range, i)
+        a_lcg_lh = c_lcg_lh.g_lcg_lh64(seed, reps, 0, math.factorial(window_range)-1, window_range, i, 0)
         end = time.perf_counter()
         a_lcg_lh = np.array(a_lcg_lh)
         assert len(a_lcg_lh) == reps
@@ -163,6 +163,6 @@ def compare_window_sizes():
 if __name__ == "__main__":
     # speed_test()
     # compare_cython_speed()
-    # compare_overlap_speed()
+    compare_overlap_speed()
     # calc_alpha_star()
-    compare_window_sizes()
+    # compare_window_sizes()

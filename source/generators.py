@@ -131,16 +131,14 @@ def csprng(reps: int, max_exclusive: int):
 
 
 def mrs_tw(seed: int, reps: int, max_exclusive: int):
-    random.seed(seed)
-    a_mrs_tw = np.empty(reps)
-    for i in range(reps):
-        a_mrs_tw[i] = random.randint(0, max_exclusive - 1)
-    return a_mrs_tw
+    bit_generator = np.random.MT19937(seed)
+    rng = np.random.Generator(bit_generator)
+    return rng.integers(0, max_exclusive, size=reps, dtype=np.uint32)
 
 
 def pcg64(seed: int, reps: int, max_exclusive: int):
-    np.random.seed(seed)
-    return np.random.randint(max_exclusive, size=reps)
+    rng = np.random.default_rng(seed)
+    return rng.integers(0, max_exclusive, size=reps, dtype=np.uint32)
 
 
 if __name__ == '__main__':

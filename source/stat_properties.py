@@ -131,5 +131,7 @@ def plot_distribution(data, title="Distribution of Values", bins=24):
 
 
 if __name__ == "__main__":
-    large_lcg_vs_lcg_lh()
+    # large_lcg_vs_lcg_lh()
+    array = pcg64(123456789, 100000, 2**32-1)
+    general_display_arrays([("pcg64", array)], 0, 2**32-1)
     # serial_correlation_comparison()
