@@ -17,7 +17,7 @@ def output(next_seed, expected):
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers = gens.mrs_tw(next_seed, expected, maximum+1)
+    numbers = gens.pcg64(next_seed, expected, maximum+1)
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)
         raise SystemExit(1)
