@@ -1,22 +1,35 @@
 from setuptools import Extension, setup
 from Cython.Build import cythonize
 import numpy
+import os
 
-# Define the extension module. This tells setuptools what to compile.
+# Note: If you are on Windows (MSVC), use '/O2' instead of '-O3' and '-march=native'.
+c_args = [
+    "-O3",
+    "-march=native",
+    "-ffast-math",
+]
+
 extensions = [
     Extension(
-        # The name of the resulting .so or .pyd file
         "c_lcg_lh",
-        # The list of source Cython files
         ["c_lcg_lh.pyx"],
-        # We need to include the NumPy C header files for compilation
         include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
     ),
 ]
 
-# The main setup function
 setup(
     name="LCG_LH Cython Module",
-    # cythonize() converts the .pyx file to a .c file and compiles it
-    ext_modules=cythonize(extensions),
+    ext_modules=cythonize(
+        extensions,
+        compiler_directives={
+            'boundscheck': False,
+            'wraparound': False,
+            'cdivision': True,
+            'nonecheck': False,
+            'initializedcheck': False,
+            'language_level': "3",
+        }
+    ),
 )
