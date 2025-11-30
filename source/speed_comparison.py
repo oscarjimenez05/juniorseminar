@@ -161,8 +161,8 @@ def compare_window_sizes():
 
 
 if __name__ == "__main__":
-    # speed_test()
+    speed_test()
     # compare_cython_speed()
-    compare_overlap_speed()
+    # compare_overlap_speed()
     # calc_alpha_star()
     # compare_window_sizes()
