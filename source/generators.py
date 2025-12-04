@@ -5,6 +5,7 @@ from sys import stderr
 
 # import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 from numpy.lib.stride_tricks import sliding_window_view
 
 def get_factorials(w):
@@ -143,15 +144,24 @@ def pcg64(seed: int, reps: int, max_exclusive: int):
 
 if __name__ == '__main__':
     # print(lcg_lh64(42, 10, 4, 2))
-    normal_sequence = random_numbers_array = np.random.normal(loc=100, scale=15, size=1000000)
-    normal_sequence = np.round(normal_sequence).astype(int)
-    # plt.hist(normal_sequence)
-    # plt.show()
+    # normal_sequence = random_numbers_array = np.random.normal(loc=100, scale=15, size=100000)
+    normal = random_numbers_array = np.random.exponential(scale=10, size=10*1000000)
+    normal_sequence = np.round(normal).astype(int)[:1000000]
+    print(len(normal_sequence))
+    plt.hist(normal_sequence, bins=120)
+    plt.title("Distribution generated from random exponential distribution")
+    plt.xlabel("Number Generated")
+    plt.ylabel("Frequency")
+    plt.show()
     mini = 0
-    maxi = 119
-    w = 6
-    lehmer = lehmerize_sequence(normal_sequence, 1000000, mini, maxi, w, 0, 0)
+    maxi = 719
+    w = 7
+    lehmer = lehmerize_sequence(normal, 1000000, mini, maxi, w, 0, 0)
     print(min(lehmer))
     print(max(lehmer))
-    # plt.hist(lehmer, bins=np.arange(mini -0.5, maxi+0.5, 1))
-    # plt.show()
+    print(len(lehmer))
+    plt.hist(lehmer, bins=120)
+    plt.title("Distribution after Lehmer code")
+    plt.xlabel("Number Generated")
+    plt.ylabel("Frequency")
+    plt.show()
