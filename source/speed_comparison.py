@@ -45,9 +45,9 @@ def speed_test(disp=False):
     # XOR_LH
     start_xor_lh = time.perf_counter()
     # fully non-overlapping
-    a_xor_lh = xor_lh.(seed, reps, 0, max_exclusive - 1, window_range, 0, 0)
+    a_xor_lh = xor_lh.xor_lh(seed, reps, 0, max_exclusive - 1, window_range, 0, 0)
     end_xor_lh = time.perf_counter()
-    a_xor_lh = np.array(a_lcg_lh)
+    a_xor_lh = np.array(a_xor_lh)
     assert len(a_lcg_lh) == reps
 
     # MRS_TW
@@ -65,6 +65,7 @@ def speed_test(disp=False):
     print("Average time for CSPRNG: " + str((end_csprng - start_csprng) / reps))
     print("Average time for LCG   : " + str((end_lcg - start_lcg) / reps))
     print("Average time for LCG_LH: " + str((end_lcg_lh - start_lcg_lh) / reps))
+    print("Average time for XOR_LH: " + str((end_xor_lh - start_xor_lh) / reps))
     print("Average time for MRW_TW: " + str((end_mrs_tw - start_mrs_tw) / reps))
     print("Average time for PCG_64: " + str((end_pcg64 - start_pcg64) / reps))
 

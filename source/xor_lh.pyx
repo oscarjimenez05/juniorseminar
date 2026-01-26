@@ -5,8 +5,8 @@ import numpy as np
 cimport numpy as np
 import math
 import sys
-from libc.string cimport memmove
-from randomgen import Xorshiro128
+from libc.string cimport memmove, memcpy
+from randomgen import Xoroshiro128
 
 from libc.stdlib cimport malloc, free
 
@@ -32,7 +32,7 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
 
     cdef unsigned long long *factorials = get_factorials(w)
     cdef unsigned long long R = math.factorial(w)
-    cdef unsigned long long thresh = R - (R%r)
+    cdef unsigned long long thresh = R - (R % r)
     cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
     cdef np.int64_t * lehmer_codes_ptr = &lehmer_codes[0]
 
@@ -41,15 +41,16 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
     # this will count the number of final numbers in the array
     cdef int count = 0
 
-
-    if delta>w:
+    if delta > w:
         print(f"Delta {delta} greater than window size {w}", sys.stderr)
         exit(1)
 
-    xorshiro = Xorshiro128(seed)
+    cdef object xoroshiro = Xoroshiro128(seed)
 
-    cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = xorshiro.random_raw(w)
+    # generate initial full window directly
+    cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = xoroshiro.random_raw(w)
     cdef unsigned long long * underl_ptr = &underl_sequence[0]
+    cdef np.ndarray[np.uint64_t, ndim=1] next_chunk
 
     # for incremental updates
     cdef bint is_initialized = 0
@@ -108,9 +109,8 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
             current_digits = temp_ptr
 
         ########## check for bounds
-
         if lehmer < thresh:
-            lehmer_codes_ptr[count] = (lehmer%r) + minimum
+            lehmer_codes_ptr[count] = (lehmer % r) + minimum
             count += 1
 
         seed = underl_ptr[w - 1]
@@ -125,24 +125,26 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
             print("\n----------\n")
 
         ########## generate the next numbers
-        if delta == w:
-            for i in range(w):
-                seed = (lcg_a * seed + lcg_c)
-                underl_ptr[i] = seed
-        else:
-            memmove(underl_ptr,  # dest: start of buffer
-                    underl_ptr + delta,  # source: 'delta' elements in
-                    (w - delta) * sizeof(unsigned long long))  # num bytes
 
-            # generate delta new numbers to fill until end of the buffer.
-            for i in range(w - delta, w):
-                seed = (lcg_a * seed + lcg_c)
-                underl_ptr[i] = seed
+        # shift existing data to the left (if not replacing everything)
+        if delta < w:
+            memmove(underl_ptr,
+                    underl_ptr + delta,
+                    (w - delta) * sizeof(unsigned long long))
+
+        # generate new delta numbers
+        next_chunk = xoroshiro.random_raw(delta)
+
+        # copy the new numbers into the end of the buffer
+        memcpy(underl_ptr + (w - delta),
+               &next_chunk[0],
+               delta * sizeof(unsigned long long))
 
     free(previous_digits)
     free(current_digits)
     free(factorials)
     return lehmer_codes
+
 
 cpdef np.ndarray[np.int64_t, ndim=1] xor_lh(unsigned long long seed, int n, long long minimum,
                                                 long long maximum, int w, int delta,
