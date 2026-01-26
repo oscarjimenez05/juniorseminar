@@ -6,7 +6,6 @@ cimport numpy as np
 import math
 import sys
 from libc.string cimport memmove
-# from libc.sizeof cimport sizeof
 
 from libc.stdlib cimport malloc, free
 

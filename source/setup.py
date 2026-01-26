@@ -17,10 +17,16 @@ extensions = [
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
     ),
+    Extension(
+        "xor_lh",
+        ["xor_lh.pyx"],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
+    )
 ]
 
 setup(
-    name="LCG_LH Cython Module",
+    name="Lehmerized Generator Cython Module",
     ext_modules=cythonize(
         extensions,
         compiler_directives={

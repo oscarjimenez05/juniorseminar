@@ -5,7 +5,7 @@ from generators import *
 from stat_properties import display_arrays
 import matplotlib.pyplot as plt
 
-import c_lcg_lh
+import c_lcg_lh, xor_lh
 
 
 def shannon_entropy(seq: [int]):
@@ -40,6 +40,14 @@ def speed_test(disp=False):
     a_lcg_lh = c_lcg_lh.g_lcg_lh64(seed, reps, 0, max_exclusive-1, window_range, 0, 0)
     end_lcg_lh = time.perf_counter()
     a_lcg_lh = np.array(a_lcg_lh)
+    assert len(a_lcg_lh) == reps
+
+    # XOR_LH
+    start_xor_lh = time.perf_counter()
+    # fully non-overlapping
+    a_xor_lh = xor_lh.(seed, reps, 0, max_exclusive - 1, window_range, 0, 0)
+    end_xor_lh = time.perf_counter()
+    a_xor_lh = np.array(a_lcg_lh)
     assert len(a_lcg_lh) == reps
 
     # MRS_TW
