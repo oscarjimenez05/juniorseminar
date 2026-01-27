@@ -6,13 +6,38 @@ cimport numpy as np
 import math
 import sys
 from libc.string cimport memmove, memcpy
-from randomgen import Xoroshiro128
-
 from libc.stdlib cimport malloc, free
 
 import cython
+from libc.stdint cimport uint64_t
 
-np.import_array()
+cdef class Xorshift64:
+    cdef uint64_t state
+
+    def __cinit__(self, uint64_t seed):
+        if seed == 0:
+            raise ValueError("Seed cannot be 0")
+        self.state = seed
+
+    cdef inline uint64_t next(self):
+        cdef uint64_t x = self.state
+        x ^= x << 13
+        x ^= x >> 7
+        x ^= x << 17
+        self.state = x
+        return x
+
+    cdef inline np.ndarray[np.uint64_t, ndim=1] generate_n(self, int n):
+        cdef np.ndarray[np.uint64_t, ndim=1] array = np.empty(shape=n, dtype=np.uint64)
+        for i in range(n):
+            array.put(self.next())
+        return array
+
+    def randint(self):
+        """Returns a random 64-bit integer"""
+        return self.next()
+
+# ---------------------------------------
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -22,10 +47,11 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
         unsigned long long seed, int n, long long minimum,
         long long maximum, int w, int delta, int debug):
     """
-    Internal C-level function.
+    Internal C-level function with inlined Xorshift64.
     """
 
-    cdef long long r = maximum-minimum+1
+    cdef long long r = maximum - minimum + 1
+    cdef Xorshift64 generator = Xorshift64(seed)
 
     if delta == 0:
         delta = w
@@ -45,10 +71,8 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
         print(f"Delta {delta} greater than window size {w}", sys.stderr)
         exit(1)
 
-    cdef object xoroshiro = Xoroshiro128(seed)
-
     # generate initial full window directly
-    cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = xoroshiro.random_raw(w)
+    cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = generator.generate_n(w)
     cdef unsigned long long * underl_ptr = &underl_sequence[0]
     cdef np.ndarray[np.uint64_t, ndim=1] next_chunk
 
@@ -133,7 +157,7 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
                     (w - delta) * sizeof(unsigned long long))
 
         # generate new delta numbers
-        next_chunk = xoroshiro.random_raw(delta)
+        next_chunk = generator.generate_n(delta)
 
         # copy the new numbers into the end of the buffer
         memcpy(underl_ptr + (w - delta),
@@ -145,16 +169,11 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
     free(factorials)
     return lehmer_codes
 
-
 cpdef np.ndarray[np.int64_t, ndim=1] xor_lh(unsigned long long seed, int n, long long minimum,
-                                                long long maximum, int w, int delta,
-                                                int debug):
+                                            long long maximum, int w, int delta,
+                                            int debug):
     """
-    General version which takes all parameters
-    LCG-LH implementation for generalized ranges.
-    It generates only w LCG numbers at a time.
-
-    This is now a thin wrapper around the C-level '__g_lcg_lh64_internal'
+    Wrapper for Xorshift64 Lehmer Generator.
     """
     return __xor_lh_internal(seed, n, minimum, maximum, w, delta, debug)
 
