@@ -5,39 +5,22 @@ import numpy as np
 cimport numpy as np
 import math
 import sys
-from libc.string cimport memmove, memcpy
+from libc.string cimport memmove
 from libc.stdlib cimport malloc, free
 
 import cython
 from libc.stdint cimport uint64_t
 
-cdef class Xorshift64:
-    cdef uint64_t state
+np.import_array()
 
-    def __cinit__(self, uint64_t seed):
-        if seed == 0:
-            raise ValueError("Seed cannot be 0")
-        self.state = seed
-
-    cdef inline uint64_t next(self):
-        cdef uint64_t x = self.state
-        x ^= x << 13
-        x ^= x >> 7
-        x ^= x << 17
-        self.state = x
-        return x
-
-    cdef inline np.ndarray[np.uint64_t, ndim=1] generate_n(self, int n):
-        cdef np.ndarray[np.uint64_t, ndim=1] array = np.empty(shape=n, dtype=np.uint64)
-        for i in range(n):
-            array.put(self.next())
-        return array
-
-    def randint(self):
-        """Returns a random 64-bit integer"""
-        return self.next()
-
-# ---------------------------------------
+cdef inline uint64_t xorshift64_next(uint64_t *state) nogil:
+    cdef uint64_t x = state[0]
+    x ^= x << 13
+    x ^= x >> 7
+    x ^= x << 17
+    state[0] = x
+    return x
+# ------------------------------------------
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
@@ -51,7 +34,9 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
     """
 
     cdef long long r = maximum - minimum + 1
-    cdef Xorshift64 generator = Xorshift64(seed)
+
+    if seed == 0: seed = 123456789
+    cdef uint64_t state = seed
 
     if delta == 0:
         delta = w
@@ -63,18 +48,20 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
     cdef np.int64_t * lehmer_codes_ptr = &lehmer_codes[0]
 
     cdef unsigned long long lehmer
-    cdef int i, j, smaller
-    # this will count the number of final numbers in the array
+    cdef int i, j, k, smaller
+    # counting numbers in final array
     cdef int count = 0
 
     if delta > w:
         print(f"Delta {delta} greater than window size {w}", sys.stderr)
         exit(1)
 
-    # generate initial full window directly
-    cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = generator.generate_n(w)
+    cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = np.empty(w, dtype=np.uint64)
     cdef unsigned long long * underl_ptr = &underl_sequence[0]
-    cdef np.ndarray[np.uint64_t, ndim=1] next_chunk
+
+    for i in range(w):
+        underl_ptr[i] = xorshift64_next(&state)
+    # ---------------------------------
 
     # for incremental updates
     cdef bint is_initialized = 0
@@ -86,7 +73,6 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
     cdef long long new_digit
 
     while count < n:
-        # lehmer from scratch
         if delta == w or (not is_initialized):
             lehmer = 0
             is_initialized = 1
@@ -137,32 +123,23 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __xor_lh_internal(
             lehmer_codes_ptr[count] = (lehmer % r) + minimum
             count += 1
 
-        seed = underl_ptr[w - 1]
-
         if debug:
             print(f"Base sequence: {underl_sequence}")
-            print(f"Next seed: {seed}")
+            print(f"Next seed: {state}")
             print(f"Lehmer code: {lehmer} (valid? {lehmer<thresh})")
             print(f"Lehmer code adjusted for range: {(lehmer%r) + minimum})")
             py_prev_digits = [previous_digits[i] for i in range(w - 1)]
             print(f"Previous digits: {py_prev_digits}")
             print("\n----------\n")
 
-        ########## generate the next numbers
-
-        # shift existing data to the left (if not replacing everything)
         if delta < w:
             memmove(underl_ptr,
                     underl_ptr + delta,
                     (w - delta) * sizeof(unsigned long long))
 
-        # generate new delta numbers
-        next_chunk = generator.generate_n(delta)
-
-        # copy the new numbers into the end of the buffer
-        memcpy(underl_ptr + (w - delta),
-               &next_chunk[0],
-               delta * sizeof(unsigned long long))
+        # generate new numbers into the pointer
+        for i in range(w - delta, w):
+            underl_ptr[i] = xorshift64_next(&state)
 
     free(previous_digits)
     free(current_digits)
