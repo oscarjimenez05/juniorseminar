@@ -5,6 +5,7 @@ import time
 import argparse
 
 import c_lcg_lh as c
+import xor_lh as xor
 
 maximum = 2 ** 32 - 1
 seed = 3817035023
@@ -17,8 +18,8 @@ def output(next_seed, expected):
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers = c.calc_g_lcg_lh64(next_seed, expected, 0, maximum, delta=0, debug=debug)
-    # numbers = c.shift32lcg64(next_seed, expected)
+    numbers = xor.xor_lh(next_seed, expected, 0, maximum, 14, delta=0, debug=debug)
+
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)
         raise SystemExit(1)
