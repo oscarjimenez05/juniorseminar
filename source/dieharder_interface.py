@@ -52,7 +52,7 @@ def pipe():
             next_seed = output(next_seed, chunk_size)
 
             chunks_sent += 1
-            if chunks_sent % 2000 == 0:
+            if chunks_sent % 4000 == 0:
                 elapsed = time.time() - start_time
                 rate = (chunks_sent * chunk_size) / elapsed
                 print(f"[INFO] Sent {chunks_sent:,} chunks "
