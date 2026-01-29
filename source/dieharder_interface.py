@@ -8,9 +8,14 @@ import c_lcg_lh as c
 import xor_lh as xor
 
 maximum = 2 ** 32 - 1
-seed = 3817035023
-chunk_size = 8192
-debug = 0
+seed = 123456789
+chunk_size = 4
+
+w = 14
+delta = 0
+debug = 1
+
+total_numbers = 20
 
 
 def output(next_seed, expected):
@@ -18,7 +23,7 @@ def output(next_seed, expected):
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers = xor.xor_lh(next_seed, expected, 0, maximum, 14, delta=0, debug=debug)
+    numbers, new_state = c.g_lcg_lh64(next_seed, expected, 0, maximum, w, delta, debug)
 
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)
@@ -29,9 +34,10 @@ def output(next_seed, expected):
     if debug:
         for num in numbers:
             print(num, file=sys.stderr)
+        print(f"\nThe next state is: {new_state}\n", file=sys.stderr)
 
     sys.stdout.flush()
-    return int(numbers[-1])
+    return int(new_state)
 
 
 def pipe():
@@ -72,8 +78,6 @@ def file():
     """
     Generate a fixed number of random 32-bit unsigned integers and write to stdout as binary.
     """
-    total_numbers = 200_000_000
-
     print(f"--- Dieharder Fixed Output Interface Initialized ---", file=sys.stderr)
     print(f"Range = [0, {maximum}]", file=sys.stderr)
     print(f"Chunk size = {chunk_size}", file=sys.stderr)

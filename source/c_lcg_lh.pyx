@@ -12,197 +12,38 @@ from libc.stdlib cimport malloc, free
 import cython
 
 np.import_array()
-
-@cython.boundscheck(False)
-@cython.wraparound(False)
-cpdef np.ndarray[np.uint64_t, ndim=1] lcg(unsigned long long seed, int n,
-                                          unsigned long long a=1664525,
-                                          unsigned long long c=1013904223,
-                                          unsigned long long m=4294967296):
-    """
-    Cython implementation of a Linear Congruential Generator.
-    :param seed: (unsigned int): initial seed
-    :param n: (int): number of elements to generate
-    :param a: (unsigned int): multiplier
-    :param c: (unsigned int): increment
-    :param m: (long long): modulus
-    """
-    cdef np.ndarray[np.uint64_t, ndim=1] result = np.empty(n, dtype=np.uint64)
-
-    cdef unsigned long long x = seed
-    cdef int i
-    for i in range(n):
-        x = (a * x + c) % m
-        result[i] = x
-    return result
-
-
-cpdef np.ndarray[np.uint64_t, ndim=1] lcg64(unsigned long long seed, int n):
-    """
-    Cython implementation of a Linear Congruential Generator mod 2^64.
-    It uses parameters a and c from Knuth's MMIX LCG
-    :param seed: (unsigned lonng long int): initial seed
-    :param n: (int): number of elements to generate
-    """
-    cdef np.ndarray[np.uint64_t, ndim=1] result = np.empty(n, dtype=np.uint64)
-    cdef unsigned long long a = 6364136223846793005
-    cdef unsigned long long c = 1442695040888963407
-    cdef unsigned long long x = seed
-    cdef int i
-    for i in range(n):
-        x = ( a * x + c)
-        result[i] = x
-    return result
-
-
-cpdef np.ndarray[np.uint32_t, ndim=1] mod32lcg64(unsigned long long seed, int n):
-    """
-    LCG mod 2^64 with a mod 2^32 on top
-    """
-    cdef np.ndarray[np.uint32_t, ndim=1] result = np.empty(n, dtype=np.uint32)
-    cdef unsigned long long a = 6364136223846793005
-    cdef unsigned long long c = 1442695040888963407
-    cdef unsigned long long x = seed
-    cdef int i
-    for i in range(n):
-        x = ( a * x + c)
-        result[i] = x
-    return result
-
-
-cpdef np.ndarray[np.uint32_t, ndim=1] shift32lcg64(unsigned long long seed, int n):
-    """
-    LCG mod 2^64 with only the 32 highest order bits
-    """
-    cdef np.ndarray[np.uint32_t, ndim=1] result = np.empty(n, dtype=np.uint32)
-    cdef unsigned long long a = 6364136223846793005
-    cdef unsigned long long c = 1442695040888963407
-    cdef unsigned long long x = seed
-    cdef int i
-    for i in range(n):
-        x = ( a * x + c)
-        result[i] = x >> 32
-    return result
-
-cdef np.ndarray[np.uint64_t, ndim=2]_rel_ord(np.ndarray[np.uint64_t, ndim=1] sequence, int w):
-    """
-    Cython wrapper for generating relative orderings.
-    """
-    windows = np.lib.stride_tricks.sliding_window_view(sequence, w)
-    ranks = np.argsort(np.argsort(windows, axis=1), axis=1)
-    return ranks.astype(np.uint64)
-
-
-#@cython.boundscheck(False)
-#@cython.wraparound(False)
-cdef np.ndarray[np.uint64_t, ndim=1] _lehmer_from_ranks(np.ndarray[np.uint64_t, ndim=2] rank_lists):
-    """
-    Calculates Lehmer codes from rank orderings with C loops.
-    """
-    cdef int num_windows = rank_lists.shape[0]
-    cdef int w = rank_lists.shape[1]
-
-    # Create the result array
-    cdef np.ndarray[np.uint64_t, ndim=1] results = np.empty(num_windows, dtype=np.uint64)
-
-    # Pre-calculate factorials in a C array for fast lookup
-    cdef unsigned long long* factorials = <unsigned long long*>malloc(w * sizeof(unsigned long long))
-    if not factorials:
-        raise MemoryError()
-
-    cdef int i, j, k
-    for i in range(w):
-        factorials[i] = math.factorial(w - i - 1)
-
-    # Use a typed memoryview for fast, direct access to the rank_lists data
-    cdef const np.uint64_t[:, :] ranks_view = rank_lists
-
-    cdef unsigned long long code
-    cdef int smaller
-
-
-    for i in range(num_windows):
-        code = 0
-        for j in range(w):
-            smaller = 0
-
-            for k in range(j + 1, w):
-                if ranks_view[i, k] < ranks_view[i, j]:
-                    smaller += 1
-            code += smaller * factorials[j]
-        results[i] = code
-
-    free(factorials)
-
-    return results
-
-cpdef lcg_lh(unsigned long long seed, int n, int w, unsigned long long a=1664525,
-             unsigned long long c=1013904223, unsigned long long m=4294967296):
-    """
-    Generates Lehmer codes from a non-overlapping sliding window over an LCG sequence.
-    All intermediate steps are handled efficiently within Cython.
-    Default underlying LCG is standard [0,2^32-1]
-    """
-    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg(seed, n + w - 1, a, c, m)
-
-    cdef np.ndarray[np.uint64_t, ndim=2] ranks = _rel_ord(base_sequence, w)
-    cdef np.ndarray[np.uint64_t, ndim=2] ranks_uint64 = ranks.astype(np.uint64)
-
-    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(ranks_uint64)
-
-    return lehmer_codes
-
-cpdef np.ndarray[np.uint64_t, ndim=1] lcg_lh64(unsigned long long seed, int n, int w, int delta=1,
-                                               int debug = 0):
-    """
-    Generates Lehmer codes from a sliding window over an LCG sequence with customizable delta.
-    Underlying LCG range of 2^64.
-    """
-    if delta>w:
-        print(f"Delta {delta} greater than window size {w}", sys.stderr)
-
-    cdef np.ndarray[np.uint64_t, ndim=1] base_sequence = lcg64(seed, (n - 1) * delta + w)
-
-    cdef np.ndarray[np.uint64_t, ndim=2] windows = np.lib.stride_tricks.sliding_window_view(
-        base_sequence, w, axis=0)[::delta]
-
-    if debug:
-        print(f"Base sequence: {base_sequence}")
-        print(f"Generated windows with deltas of {delta}: {windows}")
-
-    if windows.shape[0] > n:
-        windows = windows[:n]
-
-    cdef np.ndarray[np.uint64_t, ndim=1] lehmer_codes = _lehmer_from_ranks(windows)
-    return lehmer_codes
-
-cpdef np.ndarray[np.uint64_t, ndim=1] calc_g_lcg_lh64(long long seed, int n, long long minimum,
-                                                long long maximum, int delta=1,
-                                               int debug = 0):
-    """
-    This version calculates optimal w
-    :param seed: seed
-    :param n: number of numbers to generate
-    :param minimum: minimum number in desired range (can be negative)
-    :param maximum: maximum number in desired range (can be negative)
-    :param delta: sliding window overlap
-    :param debug: whether to print debug statements
-    :return: the array of generated numbers
-    """
-
-    cdef int w = _calculate_w(maximum-minimum+1, debug=debug)
-    return g_lcg_lh64(seed, n, minimum, maximum, w, delta, debug)
-
+cdef unsigned long long[21] FACTORIALS
+FACTORIALS[0] = 1;
+FACTORIALS[1] = 1;
+FACTORIALS[2] = 2;
+FACTORIALS[3] = 6
+FACTORIALS[4] = 24;
+FACTORIALS[5] = 120;
+FACTORIALS[6] = 720;
+FACTORIALS[7] = 5040
+FACTORIALS[8] = 40320;
+FACTORIALS[9] = 362880;
+FACTORIALS[10] = 3628800
+FACTORIALS[11] = 39916800;
+FACTORIALS[12] = 479001600;
+FACTORIALS[13] = 6227020800
+FACTORIALS[14] = 87178291200;
+FACTORIALS[15] = 1307674368000
+FACTORIALS[16] = 20922789888000;
+FACTORIALS[17] = 355687428096000
+FACTORIALS[18] = 6402373705728000;
+FACTORIALS[19] = 121645100408832000
+FACTORIALS[20] = 2432902008176640000
 
 @cython.boundscheck(False)
 @cython.wraparound(False)
 @cython.cdivision(True)
 @cython.nonecheck(False)
-cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
+cdef inline tuple __g_lcg_lh64_internal(
         unsigned long long seed, int n, long long minimum,
         long long maximum, int w, int delta, int debug):
     """
-    Internal C-level function.
+    Internal C-level function. Returns (results_array, next_seed).
     """
 
     cdef long long r = maximum-minimum+1
@@ -212,33 +53,34 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
 
     cdef unsigned long long lcg_a = 6364136223846793005
     cdef unsigned long long lcg_c = 1442695040888963407
+    cdef unsigned long long x = seed
 
-    cdef unsigned long long *factorials = get_factorials(w)
-    cdef unsigned long long R = math.factorial(w)
-    cdef unsigned long long thresh = R - (R%r)
+    cdef unsigned long long R = FACTORIALS[w]
+    cdef unsigned long long thresh = R - (R % r)
     cdef np.ndarray[np.int64_t, ndim=1] lehmer_codes = np.empty(shape=n, dtype=np.int64)
-    cdef np.int64_t * lehmer_codes_ptr = &lehmer_codes[0]
+    cdef long long * lehmer_codes_ptr = <long long *> lehmer_codes.data
 
     cdef unsigned long long lehmer
-    cdef int i, j, smaller
-    # this will count the number of final numbers in the array
+    cdef int i, j, k, smaller
     cdef int count = 0
 
-    if delta>w:
-        print(f"Delta {delta} greater than window size {w}", sys.stderr)
-        exit(1)
+    if w > 20: raise ValueError("w must be <= 20 for optimized version")
 
-    cdef np.ndarray[np.uint64_t, ndim=1] underl_sequence = lcg64(seed, w)
-    cdef unsigned long long * underl_ptr = &underl_sequence[0]
+    cdef unsigned long long underl_sequence[20]
+    cdef long long previous_digits[20]
+    cdef long long current_digits[20]
 
-    # for incremental updates
-    cdef bint is_initialized = 0
-    cdef long long * previous_digits = <long long *> malloc(w * sizeof(long long))
-    cdef long long * current_digits = <long long *> malloc(w * sizeof(long long))
-    if not previous_digits or not current_digits:
-        raise MemoryError()
-    cdef long long * temp_ptr
+    cdef long long * p_prev = previous_digits
+    cdef long long * p_curr = current_digits
+    cdef long long * p_temp
     cdef long long new_digit
+
+
+    for i in range(w):
+        x = lcg_a * x + lcg_c
+        underl_sequence[i] = x
+
+    cdef bint is_initialized = 0
 
     while count < n:
         # lehmer from scratch
@@ -248,113 +90,69 @@ cdef inline np.ndarray[np.int64_t, ndim=1] __g_lcg_lh64_internal(
             for i in range(w):
                 smaller = 0
                 for j in range(i + 1, w):
-                    if underl_ptr[j] < underl_ptr[i]:
-                        smaller += 1
-
-                # storing digits for recomputation
+                    smaller += (underl_sequence[j] < underl_sequence[i])
                 if i < w - 1:
-                    previous_digits[i] = smaller
-                lehmer += <unsigned long long> smaller * factorials[i]
-
-        # update lehmer, not from scratch
+                    p_prev[i] = smaller
+                lehmer += <unsigned long long> smaller * FACTORIALS[w - 1 - i]
         else:
             lehmer = 0
 
             # update the surviving digits
             for i in range(w - delta - 1):
-                new_digit = previous_digits[i + delta]
-
-                # O(w) pass for each of the new ones
+                new_digit = p_prev[i + delta]
                 for k in range(w - delta, w):
-                    if underl_ptr[k] < underl_ptr[i]:
-                        new_digit += 1
+                    new_digit += (underl_sequence[k] < underl_sequence[i])
+                p_curr[i] = new_digit
+                lehmer += <unsigned long long> new_digit * FACTORIALS[w - 1 - i]
 
-                current_digits[i] = new_digit
-                lehmer += <unsigned long long> new_digit * factorials[i]
-
-            # delta new digits from scratch
             for i in range(w - delta - 1, w):
                 smaller = 0
                 for j in range(i + 1, w):
-                    if underl_ptr[j] < underl_ptr[i]:
-                        smaller += 1
+                    smaller += (underl_sequence[j] < underl_sequence[i])
+                p_curr[i] = smaller
+                lehmer += <unsigned long long> smaller * FACTORIALS[w - 1 - i]
 
-                current_digits[i] = smaller
-                lehmer += <unsigned long long> smaller * factorials[i]
-
-            # swap buffers
-            temp_ptr = previous_digits
-            previous_digits = current_digits
-            current_digits = temp_ptr
-
-        ########## check for bounds
+            p_temp = p_prev;
+            p_prev = p_curr;
+            p_curr = p_temp
 
         if lehmer < thresh:
-            lehmer_codes_ptr[count] = (lehmer%r) + minimum
+            lehmer_codes_ptr[count] = (lehmer % r) + minimum
             count += 1
-
-        seed = underl_ptr[w - 1]
 
         if debug:
             print(f"Base sequence: {underl_sequence}")
             print(f"Next seed: {seed}")
-            print(f"Lehmer code: {lehmer} (valid? {lehmer<thresh})")
-            print(f"Lehmer code adjusted for range: {(lehmer%r) + minimum})")
+            print(f"Lehmer code: {lehmer} (valid? {lehmer < thresh})")
+            print(f"Lehmer code adjusted for range: {(lehmer % r) + minimum})")
             py_prev_digits = [previous_digits[i] for i in range(w - 1)]
             print(f"Previous digits: {py_prev_digits}")
             print("\n----------\n")
 
-        ########## generate the next numbers
-        if delta == w:
-            for i in range(w):
-                seed = (lcg_a * seed + lcg_c)
-                underl_ptr[i] = seed
-        else:
-            memmove(underl_ptr,  # dest: start of buffer
-                    underl_ptr + delta,  # source: 'delta' elements in
-                    (w - delta) * sizeof(unsigned long long))  # num bytes
+        if delta < w:
+            memmove(underl_sequence, underl_sequence + delta, (w - delta) * 8)
 
-            # generate delta new numbers to fill until end of the buffer.
-            for i in range(w - delta, w):
-                seed = (lcg_a * seed + lcg_c)
-                underl_ptr[i] = seed
+        for i in range(w - delta, w):
+            x = lcg_a * x + lcg_c
+            underl_sequence[i] = x
 
-    free(previous_digits)
-    free(current_digits)
-    free(factorials)
-    return lehmer_codes
+    return (lehmer_codes, x)
 
-cpdef np.ndarray[np.int64_t, ndim=1] g_lcg_lh64(unsigned long long seed, int n, long long minimum,
-                                                long long maximum, int w, int delta,
-                                                int debug):
+cpdef tuple g_lcg_lh64(unsigned long long seed, int n, long long minimum,
+                       long long maximum, int w, int delta, int debug):
     """
-    General version which takes all parameters
-    LCG-LH implementation for generalized ranges.
-    It generates only w LCG numbers at a time.
-
-    This is now a thin wrapper around the C-level '__g_lcg_lh64_internal'
+    Wrapper returns (numpy_array, next_seed)
     """
     return __g_lcg_lh64_internal(seed, n, minimum, maximum, w, delta, debug)
 
 
-cdef unsigned long long* get_factorials(int w):
-    cdef unsigned long long * factorials = <unsigned long long *> malloc(w * sizeof(unsigned long long))
-    if not factorials:
-        raise MemoryError()
-    cdef int i
-    for i in range(w):
-        factorials[i] = math.factorial(w - i - 1)
-    return factorials
-
-cdef _calculate_w (long long r, int debug=0, float alpha=0.05):
-    w = 1
-    factorial = 1.0
-    while 1:
+cpdef int calculate_w(long long r):
+    cdef int w = 1
+    cdef unsigned long long f = 1
+    while True:
         w += 1
-        factorial *= w
-        if debug:
-            print(f"Currently on R = {factorial} ({w}!)\t\t {(factorial % r)*100/factorial} <= {100*alpha}")
-        if (factorial % r <= (alpha * factorial)) and (factorial >= r):
+        f *= w
+        if f >= r and (f % r) <= (0.05 * f):
             break
     return w
 
