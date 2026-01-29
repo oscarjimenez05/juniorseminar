@@ -8,17 +8,12 @@ import c_lcg_lh as c
 import xor_lh as xor
 
 maximum = 2 ** 32 - 1
-seed = 123456789
 chunk_size = 8192
-
-w = 14
-delta = 0
-debug = 0
-
 total_numbers = 200_000_000
+w = 14
 
-# Args: seed, window_size(w), delta, minimum, maximum
-generator = c.LcgLehmer(seed, w, delta, 0, maximum)
+generator = None
+debug = False
 
 
 def output(expected):
@@ -42,9 +37,9 @@ def output(expected):
 
 def pipe():
     """
-    Main function to run the PIPE interface for Dieharder.
+    Main function to run the PIPE interface for testing.
     """
-    print(f"--- Dieharder Interface Initialized ---", file=sys.stderr)
+    print(f"--- Testing Interface Initialized ---", file=sys.stderr)
     print(f"Range = [0, {maximum}]", file=sys.stderr)
     print(f"Chunk size = {chunk_size}", file=sys.stderr)
     print(f"Starting stream...", file=sys.stderr)
@@ -66,7 +61,7 @@ def pipe():
                 sys.stderr.flush()
 
     except BrokenPipeError:
-        print("\n--- Stream closed by Dieharder. Exiting gracefully. ---", file=sys.stderr)
+        print("\n--- Stream closed by Tester. Exiting gracefully. ---", file=sys.stderr)
         sys.stderr.flush()
     except KeyboardInterrupt:
         print("\n--- Stream interrupted by user. Exiting. ---", file=sys.stderr)
@@ -77,7 +72,7 @@ def file():
     """
     Generate a fixed number of random 32-bit unsigned integers and write to stdout as binary.
     """
-    print(f"--- Dieharder Fixed Output Interface Initialized ---", file=sys.stderr)
+    print(f"--- Testing Fixed Output Interface Initialized ---", file=sys.stderr)
     print(f"Range = [0, {maximum}]", file=sys.stderr)
     print(f"Chunk size = {chunk_size}", file=sys.stderr)
     print(f"Total numbers to generate = {total_numbers:,}", file=sys.stderr)
@@ -115,9 +110,25 @@ def file():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Dieharder Interface.")
-    parser.add_argument("mode", help="(f)ile or (p)ipe.")
+    parser = argparse.ArgumentParser(description="Testing Interface.")
+    parser.add_argument("mode", choices=['f', 'p'], help="(f)ile or (p)ipe.")
+    parser.add_argument("seed", type=int, help="seed")
+    parser.add_argument("delta", type=int, help="delta")
+    parser.add_argument("--debug", action="store_true", help="enable debug mode")
+    parser.add_argument("--algo", choices=['lcg', 'xor'], default='lcg', help="Choose generator algorithm")
+
     args = parser.parse_args()
+
+    global generator, debug
+    debug = args.debug
+
+    if args.algo == 'lcg':
+        generator = c.LcgLehmer(args.seed, w, args.delta, 0, maximum)
+    else:
+        # Assuming xor_lh has the same class interface
+        generator = xor.XorLehmer(args.seed, w, args.delta, 0, maximum)
+    # -----------------------------------------------
+
     if args.mode == 'f':
         file()
     elif args.mode == 'p':

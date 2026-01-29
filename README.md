@@ -8,19 +8,15 @@ C:\Users\oscar\AppData\Local\Programs\Python\Python311\python.exe setup.py build
 ## Linux
 
 ```shell
-source venv/bin/activate
-```
-
-```shell
 python3 setup.py build_ext --inplace
 ```
 
 ```shell
-python3 dieharder_interface.py p | dieharder -g 200 -d <ID> > out.txt
+python3 testing_interface.py p 123456789 0 --algo lcg | dieharder -g 200 -d <ID> > out.txt
 ```
 
 ```shell
-python3 dieharder_interface.py f > out.bin
+python3 testing_interface.py f 123456789 0 --algo lcg > out.bin
 ```
 
 ```shell
@@ -41,7 +37,7 @@ gcc test_from_pipe.c -o test_from_pipe \
 ```
 
 ```shell
-python3 dieharder_interface.py p | ./test_from_pipe > results.txt
+python3 testing_interface.py p 123456789 0 --algo lcg | ./test_from_pipe > results.txt
 ```
 
 ```shell
