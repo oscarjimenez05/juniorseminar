@@ -8,8 +8,7 @@ import c_lcg_lh as c
 import xor_lh as xor
 
 maximum = 2 ** 32 - 1
-chunk_size = 8192
-total_numbers = 200_000_000
+chunk_size = 4
 w = 14
 
 generator = None
@@ -68,7 +67,7 @@ def pipe():
         sys.stderr.flush()
 
 
-def file():
+def file(total_numbers):
     """
     Generate a fixed number of random 32-bit unsigned integers and write to stdout as binary.
     """
@@ -114,10 +113,15 @@ def main():
     parser.add_argument("mode", choices=['f', 'p'], help="(f)ile or (p)ipe.")
     parser.add_argument("seed", type=int, help="seed")
     parser.add_argument("delta", type=int, help="delta")
-    parser.add_argument("--debug", action="store_true", help="enable debug mode")
+
+    parser.add_argument("--total", type=int, help="total numbers to generate (required for file mode)")
     parser.add_argument("--algo", choices=['lcg', 'xor'], default='lcg', help="Choose generator algorithm")
+    parser.add_argument("--debug", action="store_true", help="enable debug mode")
 
     args = parser.parse_args()
+
+    if args.mode == 'f' and args.total is None:
+        parser.error("the 'f' mode requires --total <number>.")
 
     global generator, debug
     debug = args.debug
@@ -130,7 +134,7 @@ def main():
     # -----------------------------------------------
 
     if args.mode == 'f':
-        file()
+        file(args.total)
     elif args.mode == 'p':
         pipe()
     else:

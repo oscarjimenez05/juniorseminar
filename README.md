@@ -28,7 +28,15 @@ xxd -b file.bin | head -n 20
 ```
 
 ---
+> For testing:
 
+```shell  
+python3 testing_interface.py f 123456789 0 --total 20 --algo lcg --debug 
+```  
+
+
+---
+> Others:
 ```shell
 gcc test_from_pipe.c -o test_from_pipe \
   -I/usr/local/include \

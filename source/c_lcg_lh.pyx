@@ -6,15 +6,16 @@ cimport numpy as np
 import math
 from libc.string cimport memmove
 from libc.stdlib cimport malloc, free
+from libc.stdint cimport uint64_t
 
 np.import_array()
 
 cdef class LcgLehmer:
-    cdef unsigned long long state
-    cdef unsigned long long a
-    cdef unsigned long long c
-    cdef unsigned long long *window_buffer
-    cdef unsigned long long *factorials
+    cdef uint64_t state
+    cdef uint64_t a
+    cdef uint64_t c
+    cdef uint64_t *window_buffer
+    cdef uint64_t *factorials
     cdef int w
     cdef int delta
     cdef bint is_initialized
@@ -22,15 +23,17 @@ cdef class LcgLehmer:
     cdef long long minimum
     cdef long long maximum
     cdef long long r
-    cdef unsigned long long R
-    cdef unsigned long long thresh
+    cdef uint64_t R
+    cdef uint64_t thresh
 
-    def __cinit__(self, unsigned long long seed, int w, int delta, long long minimum, long long maximum):
+    def __cinit__(self, uint64_t seed, int w, int delta, long long minimum, long long maximum):
         self.state = seed
         self.w = w
         self.a = 6364136223846793005
         self.c = 1442695040888963407
+        
         self.is_initialized = 0
+        
         if delta == 0:
             self.delta = w
         else:
@@ -42,8 +45,8 @@ cdef class LcgLehmer:
         self.R = math.factorial(self.w)
         self.thresh = self.R - (self.R % self.r)
 
-        self.window_buffer = <unsigned long long *> malloc(w * sizeof(unsigned long long))
-        self.factorials = <unsigned long long *> malloc(w * sizeof(unsigned long long))
+        self.window_buffer = <uint64_t *> malloc(w * sizeof(uint64_t))
+        self.factorials = <uint64_t *> malloc(w * sizeof(uint64_t))
 
         # precompute factorials
         cdef int i
@@ -55,11 +58,10 @@ cdef class LcgLehmer:
         if self.factorials: free(self.factorials)
 
     cpdef np.ndarray generate_chunk(self, int n, int debug):
-
         cdef np.ndarray[np.uint64_t, ndim=1] results = np.empty(n, dtype=np.uint64)
         cdef int count = 0
         cdef int i, j, smaller
-        cdef unsigned long long lehmer
+        cdef uint64_t lehmer
 
         cdef int digits[32]
 
@@ -74,7 +76,7 @@ cdef class LcgLehmer:
             if self.delta < self.w:
                 memmove(self.window_buffer,
                         self.window_buffer + self.delta,
-                        (self.w - self.delta) * sizeof(unsigned long long))
+                        (self.w - self.delta) * sizeof(uint64_t))
 
             # generate delta new numbers at the end
             for k in range(self.w - self.delta, self.w):
