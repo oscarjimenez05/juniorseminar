@@ -8,7 +8,7 @@ import c_lcg_lh as c
 import xor_lh as xor
 
 maximum = 2 ** 32 - 1
-chunk_size = 4
+chunk_size = 8192
 w = 14
 
 generator = None
@@ -129,7 +129,6 @@ def main():
     if args.algo == 'lcg':
         generator = c.LcgLehmer(args.seed, w, args.delta, 0, maximum)
     else:
-        # Assuming xor_lh has the same class interface
         generator = xor.XorLehmer(args.seed, w, args.delta, 0, maximum)
     # -----------------------------------------------
 
