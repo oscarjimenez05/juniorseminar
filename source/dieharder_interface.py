@@ -9,21 +9,24 @@ import xor_lh as xor
 
 maximum = 2 ** 32 - 1
 seed = 123456789
-chunk_size = 4
+chunk_size = 8192
 
 w = 14
 delta = 0
-debug = 1
+debug = 0
 
-total_numbers = 20
+total_numbers = 200_000_000
+
+# Args: seed, window_size(w), delta, minimum, maximum
+generator = c.LcgLehmer(seed, w, delta, 0, maximum)
 
 
-def output(next_seed, expected):
+def output(expected):
     """
     Outputs numbers to stdout
     :return: the next seed
     """
-    numbers, new_state = c.g_lcg_lh64(next_seed, expected, 0, maximum, w, delta, debug)
+    numbers = generator.generate_chunk(expected, debug)
 
     if len(numbers) != expected:
         print(f"[WARN] Expected {expected}, got {len(numbers)}", file=sys.stderr)
@@ -34,10 +37,7 @@ def output(next_seed, expected):
     if debug:
         for num in numbers:
             print(num, file=sys.stderr)
-        print(f"\nThe next state is: {new_state}\n", file=sys.stderr)
-
     sys.stdout.flush()
-    return int(new_state)
 
 
 def pipe():
@@ -51,11 +51,10 @@ def pipe():
 
     chunks_sent = 0
     start_time = time.time()
-    next_seed = seed
 
     try:
         while True:
-            next_seed = output(next_seed, chunk_size)
+            output(chunk_size)
 
             chunks_sent += 1
             if chunks_sent % 4000 == 0:
@@ -87,14 +86,13 @@ def file():
     chunks_sent = 0
     numbers_sent = 0
     start_time = time.time()
-    next_seed = seed
 
     try:
         while numbers_sent < total_numbers:
             remaining = total_numbers - numbers_sent
             current_chunk = min(chunk_size, remaining)
 
-            next_seed = output(next_seed, current_chunk)
+            output(current_chunk)
 
             chunks_sent += 1
             numbers_sent += current_chunk

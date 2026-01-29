@@ -61,6 +61,8 @@ cdef class LcgLehmer:
         cdef int i, j, smaller
         cdef unsigned long long lehmer
 
+        cdef int digits[32]
+
         if not self.is_initialized:
             for i in range(self.w):
                 self.state = self.a * self.state + self.c
@@ -86,6 +88,7 @@ cdef class LcgLehmer:
                 for j in range(i + 1, self.w):
                     smaller += (self.window_buffer[j] < self.window_buffer[i])
                 lehmer += smaller * self.factorials[i]
+                digits[i] = smaller
 
             if lehmer < self.thresh:
                 results[count] = (lehmer % self.r) + self.minimum
@@ -95,6 +98,7 @@ cdef class LcgLehmer:
                 current_window = [self.window_buffer[k] for k in range(self.w)]
                 print(f"Base sequence: {current_window}")
                 print(f"State: {self.state}")
+                print(f"Lehmer digits: {[digits[k] for k in range(self.w)]}")
                 print(f"Lehmer code: {lehmer} (valid? {lehmer < self.thresh})")
                 print(f"Lehmer code adjusted for range: {(lehmer % self.r) + self.minimum})")
                 print("\n----------\n")
