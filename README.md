@@ -55,15 +55,15 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 # Dockerizing
 
 ```shell
-docker build -t prng-bench .
-```
-
-```shell
-docker run -it --rm prng-bench
+docker build -t marzopa/prng-bench .
 ```
 
 ```shell
 docker push marzopa/prng-bench:latest
+```
+
+```shell
+docker run -it --rm marzopa/prng-bench
 ```
 
 ```shell
