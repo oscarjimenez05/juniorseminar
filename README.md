@@ -51,3 +51,9 @@ python3 testing_interface.py p 123456789 0 --algo lcg | ./test_from_pipe > resul
 ```shell
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ```
+
+# Dockerizing
+
+```shell
+docker build -t prng-bench .
+```
