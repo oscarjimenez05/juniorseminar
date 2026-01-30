@@ -61,3 +61,7 @@ docker build -t prng-bench .
 ```shell
 docker run -it --rm prng-bench
 ```
+
+```shell
+Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process; .\run_tests.ps1
+```
