@@ -57,3 +57,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 ```shell
 docker build -t prng-bench .
 ```
+
+```shell
+docker run -it --rm prng-bench
+```
