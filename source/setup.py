@@ -6,7 +6,6 @@ import os
 # Note: If you are on Windows (MSVC), use '/O2' instead of '-O3' and '-march=native'.
 c_args = [
     "-O3",
-    "-march=native",
     "-ffast-math",
 ]
 
