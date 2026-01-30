@@ -27,9 +27,7 @@ function Launch-Test ($name, $algo, $delta) {
 
 Write-Host "--- Starting Parallel Tests ---" -ForegroundColor Cyan
 
-Launch-Test "LCG_Noverlap" "lcg" 0
-Launch-Test "LCG_Delta13"  "lcg" 13
-Launch-Test "XOR_Noverlap" "xor" 0
-Launch-Test "XOR_Delta13"  "xor" 13
+Launch-Test "LCG_Delta1" "lcg" 1
+Launch-Test "XOR_Delta1"  "xor" 1
 
 Write-Host "Done! Check results folder" -ForegroundColor Yellow
