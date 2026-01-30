@@ -1,5 +1,5 @@
 
-$SEED = 12345
+$SEED = 2366022249
 $IMAGE_NAME = "prng-bench"
 $RESULTS_DIR = "${PWD}/results"
 g
