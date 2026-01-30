@@ -3,6 +3,7 @@
 
 import numpy as np
 cimport numpy as np
+import cython
 import math
 from libc.string cimport memmove
 from libc.stdlib cimport malloc, free
@@ -60,6 +61,8 @@ cdef class XorLehmer:
         if self.window_buffer: free(self.window_buffer)
         if self.factorials: free(self.factorials)
 
+    @cython.boundscheck(False)
+    @cython.wraparound(False)
     cpdef np.ndarray generate_chunk(self, int n, int debug):
         cdef np.ndarray[np.uint64_t, ndim=1] results = np.empty(n, dtype=np.uint64)
         cdef int count = 0
@@ -74,37 +77,51 @@ cdef class XorLehmer:
                 self.window_buffer[i] = self.state
             self.is_initialized = 1
 
+        # PINNED LOCAL VARIABLES
+        cdef uint64_t p_state = self.state
+        cdef uint64_t p_thresh = self.thresh
+        cdef uint64_t p_lehmer
+        cdef long long p_minimum = self.minimum
+        cdef long long p_r = self.r
+        cdef int p_w = self.w
+        cdef int p_delta = self.delta
+        cdef uint64_t *p_window = self.window_buffer
+        cdef uint64_t *p_factorials = self.factorials
+
         while count < n:
-            if self.delta < self.w:
-                memmove(self.window_buffer,
-                        self.window_buffer + self.delta,
-                        (self.w - self.delta) * sizeof(uint64_t))
+            if p_delta < p_w:
+                memmove(p_window,
+                        p_window + p_delta,
+                        (p_w - p_delta) * sizeof(uint64_t))
 
             # generate delta new numbers using Xorshift
-            for k in range(self.w - self.delta, self.w):
-                self.state = xorshift64_step(self.state)
-                self.window_buffer[k] = self.state
+            for k in range(p_w - p_delta, p_w):
+                p_state = xorshift64_step(p_state)
+                p_window[k] = p_state
 
             lehmer = 0
-            for i in range(self.w):
+            for i in range(p_w):
                 smaller = 0
-                for j in range(i + 1, self.w):
-                    smaller += (self.window_buffer[j] < self.window_buffer[i])
+                for j in range(i + 1, p_w):
+                    smaller += (p_window[j] < p_window[i])
 
-                lehmer += smaller * self.factorials[i]
-                digits[i] = smaller  # Capture for debug
+                lehmer += smaller * p_factorials[i]
+                if debug: digits[i] = smaller
 
-            if lehmer < self.thresh:
-                results[count] = (lehmer % self.r) + self.minimum
+            if lehmer < p_thresh:
+                results[count] = (lehmer % p_r) + p_minimum
                 count += 1
 
             if debug:
-                current_window = [self.window_buffer[k] for k in range(self.w)]
+                current_window = [p_window[k] for k in range(p_w)]
                 print(f"Base sequence: {current_window}")
-                print(f"State: {self.state}")
-                print(f"Lehmer digits: {[digits[k] for k in range(self.w)]}")
-                print(f"Lehmer code: {lehmer} (valid? {lehmer < self.thresh})")
-                print(f"Lehmer code adjusted for range: {(lehmer % self.r) + self.minimum})")
+                print(f"State: {p_state}")
+                print(f"Lehmer digits: {[digits[k] for k in range(p_w)]}")
+                print(f"Lehmer code: {lehmer} (valid? {lehmer < p_thresh})")
+                print(f"Lehmer code adjusted for range: {(lehmer % p_r) + p_minimum})")
                 print("\n----------\n")
+
+        # CRUCIAL, update persistent state
+        self.state = p_state
 
         return results

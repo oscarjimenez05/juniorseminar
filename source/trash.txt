@@ -1,9 +1,136 @@
-PS C:\Users\oscar\OneDrive\OLD\Escritorio\PythonCode\source> .\run_tests.ps1
-.\run_tests.ps1 : File C:\Users\oscar\OneDrive\OLD\Escritorio\PythonCode\source\run_tests.ps1 cannot be loaded because
-running scripts is disabled on this system. For more information, see about_Execution_Policies at
-https:/go.microsoft.com/fwlink/?LinkID=135170.
-At line:1 char:1
-+ .\run_tests.ps1
-+ ~~~~~~~~~~~~~~~
-    + CategoryInfo          : SecurityError: (:) [], PSSecurityException
-    + FullyQualifiedErrorId : UnauthorizedAccess
+PS C:\Users\oscar\Desktop\Ithaca\Math Research\PythonCode\source> docker build -t prng-bench .
+[+] Building 4.3s (12/13)                                                                                                                                      docker:desktop-linux
+ => [internal] load build definition from Dockerfile                                                                                                                           0.1s
+ => => transferring dockerfile: 531B                                                                                                                                           0.0s
+ => [internal] load metadata for docker.io/library/python:3.9-slim-bullseye                                                                                                    0.5s
+ => [auth] library/python:pull token for registry-1.docker.io                                                                                                                  0.0s
+ => [internal] load .dockerignore                                                                                                                                              0.0s
+ => => transferring context: 175B                                                                                                                                              0.0s
+ => [1/8] FROM docker.io/library/python:3.9-slim-bullseye@sha256:b9e06687fbfc57f6fe563e94e4c8751e39513dde89afc120dc6f56afe5ffc761                                              0.0s
+ => => resolve docker.io/library/python:3.9-slim-bullseye@sha256:b9e06687fbfc57f6fe563e94e4c8751e39513dde89afc120dc6f56afe5ffc761                                              0.0s
+ => [internal] load build context                                                                                                                                              0.0s
+ => => transferring context: 17.94kB                                                                                                                                           0.0s
+ => CACHED [2/8] RUN sed -i 's/main/main contrib non-free/g' /etc/apt/sources.list                                                                                             0.0s
+ => CACHED [3/8] RUN apt-get update && apt-get install -y     gcc     libc-dev     libtestu01-0-dev     dieharder     make     && rm -rf /var/lib/apt/lists/*                  0.0s
+ => CACHED [4/8] RUN pip install --no-cache-dir numpy cython setuptools                                                                                                        0.0s
+ => CACHED [5/8] WORKDIR /app                                                                                                                                                  0.0s
+ => [6/8] COPY . .                                                                                                                                                             0.1s
+ => ERROR [7/8] RUN python3 setup.py build_ext --inplace                                                                                                                       3.4s
+------
+ > [7/8] RUN python3 setup.py build_ext --inplace:
+3.217
+3.217 Error compiling Cython file:
+3.217 ------------------------------------------------------------
+3.217 ...
+3.217         cdef int p_delta = self.delta
+3.217         cdef uint64_t *p_window = self.window_buffer
+3.217         cdef uint64_t *p_factorials = self.factorials
+3.217
+3.217         cdef int count = 0
+3.217         cdef int i, j, k, smaller
+3.217                  ^
+3.217 ------------------------------------------------------------
+3.217 xor_lh.pyx:87:17: 'i' redeclared
+3.217
+3.217 Error compiling Cython file:
+3.217 ------------------------------------------------------------
+3.217 ...
+3.217     @cython.wraparound(False)
+3.217     cpdef np.ndarray generate_chunk(self, int n, int debug):
+3.217         cdef np.ndarray[np.uint64_t, ndim=1] results = np.empty(n, dtype=np.uint64)
+3.217
+3.217         if not self.is_initialized:
+3.217             for i in range(self.w):
+3.217                 ^
+3.217 ------------------------------------------------------------
+3.217 xor_lh.pyx:70:16: Previous declaration is here
+3.218
+3.218 Error compiling Cython file:
+3.218 ------------------------------------------------------------
+3.218 ...
+3.218         cdef int p_delta = self.delta
+3.218         cdef uint64_t *p_window = self.window_buffer
+3.218         cdef uint64_t *p_factorials = self.factorials
+3.218
+3.218         cdef int count = 0
+3.218         cdef int i, j, k, smaller
+3.218                  ^
+3.218 ------------------------------------------------------------
+3.218 xor_lh.pyx:87:17: cdef variable 'i' declared after it is used
+3.226 warning: xor_lh.pyx:72:35: local variable 'i' referenced before assignment
+3.241
+3.241 Error compiling Cython file:
+3.241 ------------------------------------------------------------
+3.241 ...
+3.241     @cython.wraparound(False)
+3.241     cpdef np.ndarray generate_chunk(self, int n, int debug):
+3.241         cdef np.ndarray[np.uint64_t, ndim=1] results = np.empty(n, dtype=np.uint64)
+3.241
+3.241         if not self.is_initialized:
+3.241             for i in range(self.w):
+3.241                      ^
+3.241 ------------------------------------------------------------
+3.241 xor_lh.pyx:70:21: Compiler crash in AnalyseExpressionsTransform
+3.241
+3.241 ModuleNode.body = StatListNode(xor_lh.pyx:4:0)
+3.241 StatListNode.stats[9] = StatListNode(xor_lh.pyx:20:0)
+3.241 StatListNode.stats[0] = CClassDefNode(xor_lh.pyx:20:0,
+3.241     as_name = 'XorLehmer',
+3.241     class_name = 'XorLehmer',
+3.241     module_name = '',
+3.241     punycode_class_name = 'XorLehmer',
+3.241     visibility = 'private')
+3.241 CClassDefNode.body = StatListNode(xor_lh.pyx:21:4)
+3.241 StatListNode.stats[2] = CFuncDefNode(xor_lh.pyx:64:4,
+3.241     args = [...]/3,
+3.241     c_compile_guard = '',
+3.241     is_c_class_method = 1,
+3.241     modifiers = [...]/0,
+3.241     outer_attrs = [...]/2,
+3.241     overridable = True,
+3.241     visibility = 'private')
+3.241 File 'Nodes.py', line 430, in analyse_expressions: StatListNode(xor_lh.pyx:64:4,
+3.241     is_terminator = True)
+3.241 File 'Nodes.py', line 430, in analyse_expressions: StatListNode(xor_lh.pyx:67:8,
+3.241     is_terminator = True)
+3.241 File 'Nodes.py', line 7304, in analyse_expressions: IfStatNode(xor_lh.pyx:69:8)
+3.241 File 'Nodes.py', line 7351, in analyse_expressions: IfClauseNode(xor_lh.pyx:69:11)
+3.241 File 'Nodes.py', line 430, in analyse_expressions: StatListNode(xor_lh.pyx:70:12)
+3.241 File 'Nodes.py', line 7722, in analyse_expressions: ForInStatNode(xor_lh.pyx:70:12)
+3.241 File 'ExprNodes.py', line 1116, in coerce_to: NextNode(xor_lh.pyx:70:21,
+3.241     is_temp = True,
+3.241     result_is_used = True,
+3.241     use_managed_ref = True)
+3.241 File 'ExprNodes.py', line 14780, in __init__: CoerceFromPyTypeNode(xor_lh.pyx:70:21,
+3.241     is_temp = 1,
+3.241     result_is_used = True,
+3.241     use_managed_ref = True)
+3.241
+3.241 Compiler crash traceback from this point on:
+3.241   File "/usr/local/lib/python3.9/site-packages/Cython/Compiler/ExprNodes.py", line 14780, in __init__
+3.241     if not result_type.create_from_py_utility_code(env):
+3.241 AttributeError: 'UnspecifiedType' object has no attribute 'create_from_py_utility_code'
+3.241 Compiling c_lcg_lh.pyx because it changed.
+3.241 Compiling xor_lh.pyx because it changed.
+3.241 [1/2] Cythonizing c_lcg_lh.pyx
+3.241 [2/2] Cythonizing xor_lh.pyx
+3.241 Traceback (most recent call last):
+3.241   File "/app/setup.py", line 30, in <module>
+3.241     ext_modules=cythonize(
+3.241   File "/usr/local/lib/python3.9/site-packages/Cython/Build/Dependencies.py", line 1153, in cythonize
+3.243     cythonize_one(*args)
+3.243   File "/usr/local/lib/python3.9/site-packages/Cython/Build/Dependencies.py", line 1297, in cythonize_one
+3.243     raise CompileError(None, pyx_file)
+3.243 Cython.Compiler.Errors.CompileError: xor_lh.pyx
+------
+Dockerfile:18
+--------------------
+  16 |     COPY . .
+  17 |
+  18 | >>> RUN python3 setup.py build_ext --inplace
+  19 |
+  20 |     RUN gcc -o test_from_pipe test_from_pipe.c -I/usr/include/testu01 -ltestu01 -lm
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c python3 setup.py build_ext --inplace" did not complete successfully: exit code: 1
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/z47uagsh6zx9uf9oqfbnzqkpf

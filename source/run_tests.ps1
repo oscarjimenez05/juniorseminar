@@ -1,8 +1,8 @@
 
 $SEED = 2366022249
-$IMAGE_NAME = "prng-bench"
+$IMAGE_NAME = "marzopa/prng-bench"
 $RESULTS_DIR = "${PWD}/results"
-g
+
 if (!(Test-Path $RESULTS_DIR)) { New-Item -ItemType Directory -Path $RESULTS_DIR }
 
 function Launch-Test ($name, $algo, $delta) {

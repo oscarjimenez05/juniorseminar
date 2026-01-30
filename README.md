@@ -63,5 +63,9 @@ docker run -it --rm prng-bench
 ```
 
 ```shell
+docker push marzopa/prng-bench:latest
+```
+
+```shell
 Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process; .\run_tests.ps1
 ```
