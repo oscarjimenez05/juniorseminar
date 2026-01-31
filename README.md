@@ -74,5 +74,5 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process; .\run_tests.ps1
 docker run --rm `
   -v "${PWD}/dieharder_tests.sh:/app/dieharder_tests.sh" `
   -v "${PWD}/results:/app/results" `
-  marzopa/prng-bench `
+  marzopa/prng-bench
 ```
