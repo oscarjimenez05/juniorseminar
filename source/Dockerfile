@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir numpy cython setuptools
+RUN pip install --no-cache-dir matplotlib scipy statsmodels
 
 WORKDIR /app
 COPY . .

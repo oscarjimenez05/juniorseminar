@@ -16,11 +16,11 @@ def shannon_entropy(seq: [int]):
 
 
 def speed_test(disp=False):
-    reps = 1_000_000
-    window_range = 6
+    reps = 5_000_000
+    window_range = 14
     seed = 123456789
 
-    max_exclusive = math.factorial(window_range)
+    max_exclusive = 2**32
 
     # CSPRNG
     start_csprng = time.perf_counter()
@@ -28,24 +28,20 @@ def speed_test(disp=False):
     end_csprng = time.perf_counter()
     assert len(a_csprng) == reps
 
-    # LCG
-    start_lcg = time.perf_counter()
-    a_lcg = c_lcg_lh.lcg(seed, reps, a=421, c=1, m=max_exclusive)
-    end_lcg = time.perf_counter()
-    assert len(a_lcg) == reps
-
     # LCG_LH
+    LCG_LH = c_lcg_lh.LcgLehmer(seed, window_range, 0, 0, max_exclusive-1)
     start_lcg_lh = time.perf_counter()
     # fully non-overlapping
-    a_lcg_lh = c_lcg_lh.g_lcg_lh64(seed, reps, 0, max_exclusive-1, window_range, 0, 0)
+    a_lcg_lh = LCG_LH.generate_chunk(reps, 0)
     end_lcg_lh = time.perf_counter()
     a_lcg_lh = np.array(a_lcg_lh)
     assert len(a_lcg_lh) == reps
 
     # XOR_LH
     start_xor_lh = time.perf_counter()
+    XOR_LH = xor_lh.XorLehmer(seed, window_range, 0, 0, max_exclusive - 1)
     # fully non-overlapping
-    a_xor_lh = xor_lh.xor_lh(seed, reps, 0, max_exclusive - 1, window_range, 0, 0)
+    a_xor_lh = XOR_LH.generate_chunk(reps, 0)
     end_xor_lh = time.perf_counter()
     a_xor_lh = np.array(a_xor_lh)
     assert len(a_lcg_lh) == reps
@@ -63,7 +59,6 @@ def speed_test(disp=False):
     assert len(a_pcg64) == reps
 
     print("Average time for CSPRNG: " + str((end_csprng - start_csprng) / reps))
-    print("Average time for LCG   : " + str((end_lcg - start_lcg) / reps))
     print("Average time for LCG_LH: " + str((end_lcg_lh - start_lcg_lh) / reps))
     print("Average time for XOR_LH: " + str((end_xor_lh - start_xor_lh) / reps))
     print("Average time for MRW_TW: " + str((end_mrs_tw - start_mrs_tw) / reps))
@@ -71,8 +66,8 @@ def speed_test(disp=False):
 
     if disp:
         display_arrays([("CSPRNG", a_csprng),
-                        ("LCG   ", a_lcg),
                         ("LCG_LH", a_lcg_lh),
+                        ("XOR_LH", a_xor_lh),
                         ("MRS_TW", a_mrs_tw)],
                        max_exclusive, True)
 

@@ -32,6 +32,13 @@ cdef class XorLehmer:
     cdef uint64_t thresh
 
     def __cinit__(self, uint64_t seed, int w, int delta, long long minimum, long long maximum):
+        """
+        :param seed: initial state
+        :param w: window size
+        :param delta: steps to take between windows. delta=0 is the same as delta=w
+        :param minimum: inclusive
+        :param maximum: inclusive
+        """
         if seed == 0: seed = 123456789
         self.state = seed
         self.w = w

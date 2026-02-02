@@ -28,6 +28,13 @@ cdef class LcgLehmer:
     cdef uint64_t thresh
 
     def __cinit__(self, uint64_t seed, int w, int delta, long long minimum, long long maximum):
+        """
+        :param seed: initial state
+        :param w: window size
+        :param delta: steps to take between windows. delta=0 is the same as delta=w
+        :param minimum: inclusive
+        :param maximum: inclusive
+        """
         self.state = seed
         self.w = w
         self.a = 6364136223846793005
