@@ -1,3 +1,7 @@
+param(
+    [switch]$BigCrush = $false
+)
+
 
 $SEED = 2366022249
 $IMAGE_NAME = "marzopa/prng-bench"
@@ -8,7 +12,12 @@ if (!(Test-Path $RESULTS_DIR)) { New-Item -ItemType Directory -Path $RESULTS_DIR
 function Launch-Test ($name, $algo, $delta) {
     Write-Host "Launching $name..." -NoNewline
 
-    $cmd = "python3 testing_interface.py p $SEED $delta --algo $algo | ./test_from_pipe"
+    if ($BigCrush){
+        $cmd = "python3 testing_interface.py p $SEED $delta --algo $algo | ./test_from_pipe_BigCrush"
+    }
+    else{
+        $cmd = "python3 testing_interface.py p $SEED $delta --algo $algo | ./test_from_pipe"
+    }
 
     $containerName = "${name}_run"
 
@@ -27,7 +36,7 @@ function Launch-Test ($name, $algo, $delta) {
 
 Write-Host "--- Starting Parallel Tests ---" -ForegroundColor Cyan
 
-Launch-Test "LCG_Delta1" "lcg" 1
-Launch-Test "XOR_Delta1"  "xor" 1
+Launch-Test "LCG_d13" "lcg" 13
+Launch-Test "XOR_d13"  "xor" 13
 
 Write-Host "Done! Check results folder" -ForegroundColor Yellow
