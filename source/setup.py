@@ -22,6 +22,12 @@ extensions = [
         ["xor_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
+    ),
+    Extension(
+        "xor_fenwick",
+        ["xor_fenwick.pyx"],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
     )
 ]
 
