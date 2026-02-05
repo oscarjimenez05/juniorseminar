@@ -7,6 +7,7 @@ import os
 c_args = [
     "-O3",
     "-ffast-math",
+    "-funroll-loops",
 ]
 
 extensions = [

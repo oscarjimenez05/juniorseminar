@@ -85,8 +85,8 @@ cdef class LcgLehmer:
         cdef uint64_t p_state = self.state
         cdef uint64_t p_thresh = self.thresh
         cdef uint64_t p_lehmer
-        cdef long long p_minimum = self.minimum
-        cdef long long p_r = self.r
+        cdef uint64_t  p_minimum = self.minimum
+        cdef uint64_t  p_r = self.r
         cdef int p_w = self.w
         cdef int p_delta = self.delta
         cdef uint64_t *p_window = self.window_buffer
@@ -113,13 +113,18 @@ cdef class LcgLehmer:
                 for j in range(i + 1, p_w):
                     smaller += (p_window[j] < p_window[i])
                 lehmer += smaller * p_factorials[i]
-                digits[i] = smaller
 
             if lehmer < p_thresh:
                 results[count] = (lehmer % p_r) + p_minimum
                 count += 1
 
             if debug:
+                debug_digits = []
+                for i in range(p_w):
+                    s_debug = 0
+                    for j in range(i + 1, p_w):
+                        s_debug += (p_window[j] < p_window[i])
+                    debug_digits.append(s_debug)
                 current_window = [p_window[k] for k in range(p_w)]
                 print(f"Base sequence: {current_window}")
                 print(f"State: {p_state}")
