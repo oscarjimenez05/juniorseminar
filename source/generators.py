@@ -125,8 +125,7 @@ def lcg_lh(seed: int, n: int, w: int, a=1664525, c=1013904223, m=2 ** 32) -> [in
 
 def csprng(reps: int, max_exclusive: int):
     a_csprng = np.empty(reps)
-    for i in range(reps):
-        a_csprng[i] = secrets.randbelow(max_exclusive)
+    a_csprng = [secrets.randbelow(max_exclusive) for _ in range(reps)]
     return a_csprng
 
 

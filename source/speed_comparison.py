@@ -5,7 +5,7 @@ from generators import *
 from stat_properties import display_arrays
 import matplotlib.pyplot as plt
 
-import c_lcg_lh, xor_lh
+import c_lcg_lh, xor_lh, lcg_fenwick, xor_fenwick
 
 
 def shannon_entropy(seq: [int]):
@@ -16,7 +16,7 @@ def shannon_entropy(seq: [int]):
 
 
 def speed_test(disp=False):
-    reps = 5_000_000
+    reps = 1_000_000
     window_range = 14
     seed = 123456789
 
@@ -38,13 +38,29 @@ def speed_test(disp=False):
     assert len(a_lcg_lh) == reps
 
     # XOR_LH
-    start_xor_lh = time.perf_counter()
     XOR_LH = xor_lh.XorLehmer(seed, window_range, 0, 0, max_exclusive - 1)
+    start_xor_lh = time.perf_counter()
     # fully non-overlapping
     a_xor_lh = XOR_LH.generate_chunk(reps, 0)
     end_xor_lh = time.perf_counter()
     a_xor_lh = np.array(a_xor_lh)
-    assert len(a_lcg_lh) == reps
+    assert len(a_xor_lh) == reps
+
+    # LCG_FENWICK
+    LCG_FW = lcg_fenwick.LcgFenwick(seed, window_range, 0, 0, max_exclusive - 1)
+    start_lcg_fw = time.perf_counter()
+    a_lcg_fw = LCG_FW.generate_chunk(reps, 0)
+    end_lcg_fw = time.perf_counter()
+    a_lcg_fw = np.array(a_lcg_fw)
+    assert len(a_lcg_fw) == reps
+
+    # XOR_FENWICK
+    XOR_FW = xor_fenwick.XorFenwick(seed, window_range, 0, 0, max_exclusive - 1)
+    start_xor_fw = time.perf_counter()
+    a_xor_fw = XOR_FW.generate_chunk(reps, 0)
+    end_xor_fw = time.perf_counter()
+    a_xor_fw = np.array(a_xor_fw)
+    assert len(a_xor_fw) == reps
 
     # MRS_TW
     start_mrs_tw = time.perf_counter()
@@ -61,6 +77,8 @@ def speed_test(disp=False):
     print("Average time for CSPRNG: " + str((end_csprng - start_csprng) / reps))
     print("Average time for LCG_LH: " + str((end_lcg_lh - start_lcg_lh) / reps))
     print("Average time for XOR_LH: " + str((end_xor_lh - start_xor_lh) / reps))
+    print("Average time for LCG_FW: " + str((end_lcg_fw - start_lcg_fw) / reps))
+    print("Average time for XOR_FW: " + str((end_xor_fw - start_xor_fw) / reps))
     print("Average time for MRW_TW: " + str((end_mrs_tw - start_mrs_tw) / reps))
     print("Average time for PCG_64: " + str((end_pcg64 - start_pcg64) / reps))
 

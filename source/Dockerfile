@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bullseye
+FROM python:3.11-slim-bullseye
 
 RUN sed -i 's/main/main contrib non-free/g' /etc/apt/sources.list
 

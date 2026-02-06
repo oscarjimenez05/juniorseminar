@@ -16,7 +16,7 @@ python3 testing_interface.py p 123456789 0 --algo lcg | dieharder -g 200 -d <ID>
 ```
 
 ```shell
-python3 testing_interface.py f 123456789 0 --algo lcg > out.bin
+python3 testing_interface.py f 123456789 0 --total 200000000 --algo lcg > lcg.bin
 ```
 
 ```shell

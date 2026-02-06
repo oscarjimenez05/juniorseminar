@@ -6,6 +6,8 @@ import argparse
 
 import c_lcg_lh as c
 import xor_lh as xor
+import lcg_fenwick as lfw
+import xor_fenwick as xfw
 
 maximum = 2 ** 32 - 1
 chunk_size = 8192
@@ -115,7 +117,7 @@ def main():
     parser.add_argument("delta", type=int, help="delta")
 
     parser.add_argument("--total", type=int, help="total numbers to generate (required for file mode)")
-    parser.add_argument("--algo", choices=['lcg', 'xor'], default='lcg', help="Choose generator algorithm")
+    parser.add_argument("--algo", choices=['lcg', 'xor', 'lfw', 'xfw'], default='lcg', help="Choose generator algorithm")
     parser.add_argument("--debug", action="store_true", help="enable debug mode")
 
     args = parser.parse_args()
@@ -126,10 +128,16 @@ def main():
     global generator, debug
     debug = args.debug
 
-    if args.algo == 'lcg':
-        generator = c.LcgLehmer(args.seed, w, args.delta, 0, maximum)
-    else:
-        generator = xor.XorLehmer(args.seed, w, args.delta, 0, maximum)
+    match args.algo:
+        case 'lcg':
+            generator = c.LcgLehmer(args.seed, w, args.delta, 0, maximum)
+        case 'xor':
+            generator = xor.XorLehmer(args.seed, w, args.delta, 0, maximum)
+        case 'lfw':
+            generator = lfw.LcgFenwick(args.seed, w, args.delta, 0, maximum)
+        case 'xfw':
+            generator = xfw.XorFenwick(args.seed, w, args.delta, 0, maximum)
+
     # -----------------------------------------------
 
     if args.mode == 'f':
