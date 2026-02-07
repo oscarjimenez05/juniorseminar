@@ -9,22 +9,26 @@ $RESULTS_DIR = "${PWD}/results"
 if (!(Test-Path $RESULTS_DIR)) { New-Item -ItemType Directory -Path $RESULTS_DIR }
 
 function Launch-Test ($name, $algo, $delta) {
-    $name = $name + "_" + $SEED
+    $fullName = "${name}_${SEED}"
+
     if ($BigCrush){
-        $cmd = "python3 testing_interface.py p $SEED $delta --algo $algo | ./test_from_pipe_BigCrush > $reportFile"
-        $reportFile = "/app/results/${name}_BigCrush.txt"
+        $reportFile = "/app/results/${fullName}_BigCrush.txt"
+        $binary = "./test_from_pipe_BigCrush"
     }
     else{
-        $cmd = "python3 testing_interface.py p $SEED $delta --algo $algo | ./test_from_pipe > $reportFile"
-        $reportFile = "/app/results/${name}_Crush.txt"
+        $reportFile = "/app/results/${fullName}_Crush.txt"
+        $binary = "./test_from_pipe"
     }
 
-    Write-Host "Launching $name... (Report will save to results/${name}_report.txt)"
+    $cmd = "python3 testing_interface.py p $SEED $delta --algo $algo | $binary > $reportFile"
 
-    $containerName = "${name}_run"
+    Write-Host "Launching $fullName... (Output: $reportFile)"
+
+    $containerName = "${fullName}_run"
 
     docker rm -f $containerName 2>$null | Out-Null
-    docker run --rm --name $containerName `
+
+    docker run -d --rm --name $containerName `
         -v "${PWD}/results:/app/results" `
         $IMAGE_NAME `
         sh -c $cmd
@@ -32,7 +36,6 @@ function Launch-Test ($name, $algo, $delta) {
 
 Write-Host "--- Starting Parallel Tests ---" -ForegroundColor Cyan
 
-Launch-Test "LCG_d13" "lcg" 13
-Launch-Test "XOR_d13"  "xor" 13
+Launch-Test "LOG_" "log" 0
 
-Write-Host "Done! Check results folder" -ForegroundColor Yellow
+Write-Host "Tests launched! Check the 'results' folder for active logs." -ForegroundColor Yellow

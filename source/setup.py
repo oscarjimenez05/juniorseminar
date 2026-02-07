@@ -34,7 +34,13 @@ extensions = [
         ["xor_fenwick.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
-    )
+    ),
+    Extension(
+        "logistic_lh",
+        ["logistic_lh.pyx"],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
+    ),
 ]
 
 setup(

@@ -6,6 +6,7 @@ import argparse
 
 import c_lcg_lh as c
 import xor_lh as xor
+import logistic_lh as log
 import lcg_fenwick as lfw
 import xor_fenwick as xfw
 
@@ -117,7 +118,7 @@ def main():
     parser.add_argument("delta", type=int, help="delta")
 
     parser.add_argument("--total", type=int, help="total numbers to generate (required for file mode)")
-    parser.add_argument("--algo", choices=['lcg', 'xor', 'lfw', 'xfw'], default='lcg', help="Choose generator algorithm")
+    parser.add_argument("--algo", choices=['lcg', 'xor', 'log', 'lfw', 'xfw'], default='lcg', help="Choose generator algorithm")
     parser.add_argument("--debug", action="store_true", help="enable debug mode")
 
     args = parser.parse_args()
@@ -133,6 +134,8 @@ def main():
             generator = c.LcgLehmer(args.seed, w, args.delta, 0, maximum)
         case 'xor':
             generator = xor.XorLehmer(args.seed, w, args.delta, 0, maximum)
+        case 'log':
+            generator = log.LogisticLehmer(args.seed, w, args.delta, 0, maximum)
         case 'lfw':
             generator = lfw.LcgFenwick(args.seed, w, args.delta, 0, maximum)
         case 'xfw':
