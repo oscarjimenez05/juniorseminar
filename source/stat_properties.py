@@ -1,7 +1,7 @@
 from typing import Tuple
 import matplotlib.pyplot as plt
 from generators import *
-import c_lcg_lh
+import c_lcg_lh, logistic_lh
 from scipy.stats import chisquare
 import statsmodels.api as sm
 
@@ -106,7 +106,7 @@ def general_display_arrays(data: [Tuple[str, list]], minimum: int, maximum: int,
             plt.title(title)
             plt.xlabel("Index of value generated")
             plt.ylabel("Value Generated")
-            plt.show()
+            plt.savefig("indexvalue.png")
 
     print("-----------------------")
     for title, array in data:
@@ -127,11 +127,13 @@ def plot_distribution(data, title="Distribution of Values", bins=24):
     plt.xlabel("Generated Values")
     plt.ylabel("Frequency")
     plt.title(title)
-    plt.show()
+    plt.savefig("distribution.png")
 
 
 if __name__ == "__main__":
     # large_lcg_vs_lcg_lh()
-    array = pcg64(123456789, 100000, 2**32-1)
-    general_display_arrays([("pcg64", array)], 0, 2**32-1)
+    generator = logistic_lh.LogisticLehmer(123456789, 14, 0, 0, 5039)
+    array = generator.generate_chunk(1000000, 0)
+    general_display_arrays([("log_lh", array)], 0, 5039)
+    plot_distribution(array, bins=5040)
     # serial_correlation_comparison()
