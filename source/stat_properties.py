@@ -1,7 +1,8 @@
 from typing import Tuple
 import matplotlib.pyplot as plt
 from generators import *
-import c_lcg_lh, logistic_lh
+import c_lcg_lh
+from source.alternatives import logistic_lh
 from scipy.stats import chisquare
 import statsmodels.api as sm
 

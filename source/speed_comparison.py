@@ -1,11 +1,11 @@
-import math
 from collections import Counter
 import time
 from generators import *
 from stat_properties import display_arrays
 import matplotlib.pyplot as plt
 
-import c_lcg_lh, xor_lh, lcg_fenwick, xor_fenwick
+import c_lcg_lh, xor_lh
+from source.alternatives import lcg_fenwick, xor_fenwick
 
 
 def shannon_entropy(seq: [int]):

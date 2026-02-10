@@ -6,9 +6,7 @@ import argparse
 
 import c_lcg_lh as c
 import xor_lh as xor
-import logistic_lh as log
-import lcg_fenwick as lfw
-import xor_fenwick as xfw
+from source.alternatives import lcg_fenwick as lfw, xor_fenwick as xfw, logistic_lh as log
 
 maximum = 2 ** 32 - 1
 chunk_size = 8192
