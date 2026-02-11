@@ -1,7 +1,6 @@
 from setuptools import Extension, setup
 from Cython.Build import cythonize
 import numpy
-import os
 
 # Note: If you are on Windows (MSVC), use '/O2' instead of '-O3' and '-march=native'.
 c_args = [

@@ -1,42 +1,42 @@
 from setuptools import Extension, setup
 from Cython.Build import cythonize
 import numpy
-import os
 
-# Note: If you are on Windows (MSVC), use '/O2' instead of '-O3' and '-march=native'.
-c_args = [
-    "-O3",
-    "-ffast-math",
-    "-funroll-loops",
-]
+c_args = ["-O3", "-ffast-math", "-funroll-loops"]
 
 extensions = [
     Extension(
-        "lcg_fenwick",
+        "alternatives.lcg_fenwick",
         ["alternatives/lcg_fenwick.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
     ),
     Extension(
-        "xor_fenwick",
+        "alternatives.xor_fenwick",
         ["alternatives/xor_fenwick.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
     ),
     Extension(
-        "logistic_lh",
+        "alternatives.logistic_lh",
         ["alternatives/logistic_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
     ),
     Extension(
-        "slope_lh",
+        "alternatives.gaussian_lh",
+        ["alternatives/gaussian_lh.pyx"],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
+    ),
+    Extension(
+        "alternatives.slope_lh",
         ["alternatives/slope_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
     ),
     Extension(
-        "decay_lh",
+        "alternatives.decay_lh",
         ["alternatives/decay_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
@@ -44,7 +44,7 @@ extensions = [
 ]
 
 setup(
-    name="Lehmerized Generator Alternatives Cython Module",
+    name="Lehmerized Generator Alternatives",
     ext_modules=cythonize(
         extensions,
         compiler_directives={

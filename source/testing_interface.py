@@ -6,9 +6,13 @@ import argparse
 
 import c_lcg_lh as lcg
 import xor_lh as xor
-from source.alternatives import (lcg_fenwick as lfw, xor_fenwick as xfw,
-                                 logistic_lh as log, gaussian_lh as gau,
-                                 slope_lh as slp, decay_lh as dec)
+
+import alternatives.lcg_fenwick as lfw
+import alternatives.xor_fenwick as xfw
+import alternatives.logistic_lh as log
+import alternatives.gaussian_lh as gau
+import alternatives.slope_lh as slp
+import alternatives.decay_lh as dec
 
 maximum = 2 ** 32 - 1
 chunk_size = 8192
