@@ -36,6 +36,8 @@ function Launch-Test ($name, $algo, $delta) {
 
 Write-Host "--- Starting Parallel Tests ---" -ForegroundColor Cyan
 
-Launch-Test "LOG_d0" "log" 0
+Launch-Test "GAU_d0" "gau" 0
+Launch-Test "SLP_d0" "slp" 0
+Launch-Test "DEC_d0" "dec" 0
 
 Write-Host "Tests launched! Check the 'results' folder for active logs." -ForegroundColor Yellow

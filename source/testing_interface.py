@@ -4,9 +4,11 @@ import struct
 import time
 import argparse
 
-import c_lcg_lh as c
+import c_lcg_lh as lcg
 import xor_lh as xor
-from source.alternatives import lcg_fenwick as lfw, xor_fenwick as xfw, logistic_lh as log
+from source.alternatives import (lcg_fenwick as lfw, xor_fenwick as xfw,
+                                 logistic_lh as log, gaussian_lh as gau,
+                                 slope_lh as slp, decay_lh as dec)
 
 maximum = 2 ** 32 - 1
 chunk_size = 8192
@@ -116,7 +118,8 @@ def main():
     parser.add_argument("delta", type=int, help="delta")
 
     parser.add_argument("--total", type=int, help="total numbers to generate (required for file mode)")
-    parser.add_argument("--algo", choices=['lcg', 'xor', 'log', 'lfw', 'xfw'], default='lcg', help="Choose generator algorithm")
+    parser.add_argument("--algo", choices=['lcg', 'xor', 'lfw', 'xfw', 'log',
+                                           'gau', 'slp', 'dec'], default='lcg', help="Choose generator algorithm")
     parser.add_argument("--debug", action="store_true", help="enable debug mode")
 
     args = parser.parse_args()
@@ -129,15 +132,21 @@ def main():
 
     match args.algo:
         case 'lcg':
-            generator = c.LcgLehmer(args.seed, w, args.delta, 0, maximum)
+            generator = lcg.LcgLehmer(args.seed, w, args.delta, 0, maximum)
         case 'xor':
             generator = xor.XorLehmer(args.seed, w, args.delta, 0, maximum)
-        case 'log':
-            generator = log.LogisticLehmer(args.seed, w, args.delta, 0, maximum)
         case 'lfw':
             generator = lfw.LcgFenwick(args.seed, w, args.delta, 0, maximum)
         case 'xfw':
             generator = xfw.XorFenwick(args.seed, w, args.delta, 0, maximum)
+        case 'log':
+            generator = log.LogisticLehmer(args.seed, w, args.delta, 0, maximum)
+        case 'gau':
+            generator = gau.GaussianLehmer(args.seed, w, args.delta, 0, maximum)
+        case 'slp':
+            generator = slp.SlopeLehmer(args.seed, w, args.delta, 0, maximum)
+        case 'dec':
+            generator = dec.DecayLehmer(args.seed, w, args.delta, 0, maximum)
 
     # -----------------------------------------------
 

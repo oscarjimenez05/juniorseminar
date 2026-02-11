@@ -14,10 +14,14 @@ RUN pip install --no-cache-dir numpy cython setuptools
 RUN pip install --no-cache-dir matplotlib scipy statsmodels
 
 WORKDIR /app
-COPY . .
+COPY setup.py alt_setup.py ./
+COPY *.pyx ./
+COPY alternatives/ ./alternatives/
 
 RUN python3 setup.py build_ext --inplace
 RUN python3 alt_setup.py build_ext --inplace
+
+COPY . .
 
 RUN gcc -o test_from_pipe test_from_pipe.c -I/usr/include/testu01 -ltestu01 -lm
 RUN gcc -o test_from_pipe_BigCrush test_from_pipe_BigCrush.c -I/usr/include/testu01 -ltestu01 -lm
