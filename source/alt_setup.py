@@ -25,7 +25,19 @@ extensions = [
     ),
     Extension(
         "logistic_lh",
-        ["logistic_lh.pyx"],
+        ["alternatives/logistic_lh.pyx"],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
+    ),
+    Extension(
+        "slope_lh",
+        ["alternatives/slope_lh.pyx"],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
+    ),
+    Extension(
+        "decay_lh",
+        ["alternatives/decay_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
     ),
