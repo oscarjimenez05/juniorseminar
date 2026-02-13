@@ -42,7 +42,7 @@ def run_cryptanalysis():
     result = solver.check()
     end_time = time.time()
 
-    # 5. CHECK THE RESULTS
+    # CHECK RESULTS
     if result == sat:
         print("Z3 found a satisfying state!")
         model = solver.model()
