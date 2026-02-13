@@ -11,14 +11,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir numpy cython setuptools
-RUN pip install --no-cache-dir matplotlib scipy statsmodels
+RUN pip install --no-cache-dir matplotlib scipy statsmodels z3-solver
 
 WORKDIR /app
 COPY setup.py alt_setup.py ./
 COPY *.pyx ./
-COPY alternatives/ ./alternatives/
-
 RUN python3 setup.py build_ext --inplace
+
+COPY alternatives/ ./alternatives/
 RUN python3 alt_setup.py build_ext --inplace
 
 COPY . .
