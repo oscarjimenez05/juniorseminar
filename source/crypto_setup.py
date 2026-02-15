@@ -11,21 +11,15 @@ c_args = [
 
 extensions = [
     Extension(
-        "c_lcg_lh",
-        ["c_lcg_lh.pyx"],
-        include_dirs=[numpy.get_include()],
-        extra_compile_args=c_args,
-    ),
-    Extension(
-        "xor_lh",
-        ["xor_lh.pyx"],
+        "crypto.crypto_lh",
+        ["crypto/crypto_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
     ),
 ]
 
 setup(
-    name="Lehmerized Generator Cython Module",
+    name="Lehmerized CSPRNG Cython Module",
     ext_modules=cythonize(
         extensions,
         compiler_directives={

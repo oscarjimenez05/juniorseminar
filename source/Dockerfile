@@ -14,12 +14,15 @@ RUN pip install --no-cache-dir numpy cython setuptools
 RUN pip install --no-cache-dir matplotlib scipy statsmodels z3-solver
 
 WORKDIR /app
-COPY setup.py alt_setup.py ./
+COPY setup.py alt_setup.py crypto_setup.py ./
 COPY *.pyx ./
 RUN python3 setup.py build_ext --inplace
 
 COPY alternatives/ ./alternatives/
 RUN python3 alt_setup.py build_ext --inplace
+
+COPY crypto/ ./crypto/
+RUN python3 crypto_setup.py build_ext --inplace
 
 COPY . .
 
