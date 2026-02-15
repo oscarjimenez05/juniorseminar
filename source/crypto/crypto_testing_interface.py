@@ -3,6 +3,7 @@ import sys
 import struct
 import time
 import argparse
+import numpy as np
 
 import crypto_lh as crypto
 
@@ -66,11 +67,11 @@ def pipe():
         sys.stderr.flush()
 
 
-
 def main():
-    parser = argparse.ArgumentParser(description=" Crypto Testing Interface.")
-    parser.add_argument("seed", type=int, help="seed")
-    parser.add_argument("--delta", type=int, help="delta")
+    parser = argparse.ArgumentParser(description="Crypto Testing Interface.")
+    parser.add_argument("seeds", type=int, nargs='+',
+                        help="One 64-bit integer (will be expanded) or exactly five 64-bit integers.")
+    parser.add_argument("--delta", type=int, default=0, help="delta (step size)")
     parser.add_argument("--debug", action="store_true", help="enable debug mode")
 
     args = parser.parse_args()
@@ -78,7 +79,34 @@ def main():
     global generator, debug
     debug = args.debug
 
-    generator = crypto.CryptoLehmer(STATES, w, args.delta, 0, maximum)
+    raw_seeds = args.seeds
+    num_seeds = len(raw_seeds)
+
+    states = np.zeros(5, dtype=np.uint64)
+
+    if num_seeds == 1:
+        # simple SplitMix64 expansion to get 5 uncorrelated starting states
+        base_seed = raw_seeds[0]
+        print(f"[INFO] Expansion: One seed provided. Generating 5 states from {base_seed}...", file=sys.stderr)
+
+        current = base_seed
+        for i in range(5):
+            current = (current + 0x9e3779b97f4a7c15) & 0xFFFFFFFFFFFFFFFF
+            z = current
+            z = (z ^ (z >> 30)) * 0xbf58476d1ce4e5b9
+            z = (z & 0xFFFFFFFFFFFFFFFF)
+            z = (z ^ (z >> 27)) * 0x94d049bb133111eb
+            z = (z & 0xFFFFFFFFFFFFFFFF)
+            states[i] = z ^ (z >> 31)
+            print(f"[INFO] States[{i}] = {states[i]}...", file=sys.stderr)
+
+    elif num_seeds == 5:
+        print(f"[INFO] Direct: 5 seeds accepted.", file=sys.stderr)
+        states[:] = raw_seeds
+    else:
+        parser.error(f"You must provide either 1 seed or exactly 5 seeds. You provided {num_seeds}.")
+
+    generator = crypto.CryptoLehmer(states, w, args.delta, 0, maximum)
 
     pipe()
 
