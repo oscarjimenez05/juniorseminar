@@ -18,18 +18,17 @@ cdef inline uint64_t xorshift64_step(uint64_t x) nogil:
     return x
 
 cdef inline uint64_t rotate_left(uint64_t number, int r) nogil:
-    r &= 63 # because we are dealing with uint64s
-    return number << r | (number >> (sizeof(uint64_t)-r))
+    return (number << (r & 63)) | (number >> (64 - (r & 63)))
 
+cdef inline uint64_t mix_arx(uint64_t *states) nogil:
+    cdef uint64_t s1 = states[1]
+    cdef uint64_t s2 = states[2]
+    cdef uint64_t s3 = states[3]
+    cdef uint64_t s4 = states[4]
 
-cdef inline uint64_t mix_arx (uint64_t *states) nogil:
-    s1 = states[1]
-    s2 = states[2]
-    s3 = states[3]
-    s4 = states[4]
     s1 = s1 + s2
     s4 = s4 ^ s1
-    s4 = rotate_left(s4, 24)
+    s4 = rotate_left(s4, 24)  # tested from rotation_amount
 
     s3 = s3 + s4
     s2 = s2 ^ s3
@@ -45,7 +44,6 @@ cdef inline uint64_t mix_arx (uint64_t *states) nogil:
 
     return s1 ^ s2 ^ s3 ^ s4
 
-
 cdef class CryptoLehmer:
     cdef uint64_t *states
     cdef uint64_t *window_buffer
@@ -60,18 +58,12 @@ cdef class CryptoLehmer:
     cdef uint64_t R
     cdef uint64_t thresh
 
-    def __cinit__(self, np.ndarray[uint64_t, ndim=1] states, int w, int delta, long long minimum, long long maximum):
-        """
-        :param states: initial states, index zero is discriminant
-        :param w: window size
-        :param delta: steps to take between windows. delta=0 is the same as delta=w
-        :param minimum: inclusive
-        :param maximum: inclusive
-        """
-        for i in range(5):
-            if states[i] == 0: states[1] = 123456789
+    def __cinit__(self, uint64_t[::1] states, int w, int delta, long long minimum, long long maximum):
+        # Check for zero-state in the seed
+        if states[1] == 0: states[1] = 123456789
 
-        self.states = states
+        self.states = &states[0]
+
         self.w = w
 
         # fully non-overlapping
@@ -106,20 +98,20 @@ cdef class CryptoLehmer:
         cdef int count = 0
         cdef int i, j, k, smaller
         cdef uint64_t lehmer
-
+        cdef uint64_t candidate_mix
+        cdef uint64_t clock_control
         cdef int digits[32]
 
         if not self.is_initialized:
             for i in range(self.w):
-                for j in range(1, 5):
-                    self.states[i] = xorshift64_step(self.states[i])
+                for j in range(5):
+                    self.states[j] = xorshift64_step(self.states[j])
                 self.window_buffer[i] = mix_arx(self.states)
             self.is_initialized = 1
 
         # PINNED LOCAL VARIABLES
-        cdef uint64_t p_states = self.states
+        cdef uint64_t *p_states = self.states
         cdef uint64_t p_thresh = self.thresh
-        cdef uint64_t p_lehmer
         cdef uint64_t  p_minimum = self.minimum
         cdef uint64_t  p_r = self.r
         cdef int p_w = self.w
@@ -133,11 +125,18 @@ cdef class CryptoLehmer:
                         p_window + p_delta,
                         (p_w - p_delta) * sizeof(uint64_t))
 
-            # generate delta new numbers using Xorshift
-            for k in range(p_w - p_delta, p_w):
-                for j in range(1, 5):
-                    p_states[i] = xorshift64_step(p_states[i])
+            k = p_w - p_delta
+            while k < p_w: # must use while loop so continue doesnt update k automatically
+                for j in range(5):
+                    p_states[j] = xorshift64_step(p_states[j])
+
+                # If the top 2 bits are both 0 (prob 0.25), we discard this round.
+                clock_control = p_states[0] >> 62
+                if clock_control == 0:
+                    continue  # discard
+
                 p_window[k] = mix_arx(p_states)
+                k += 1
 
             lehmer = 0
             for i in range(p_w):
@@ -159,7 +158,8 @@ cdef class CryptoLehmer:
                     debug_digits.append(s_debug)
                 current_window = [p_window[k] for k in range(p_w)]
                 print(f"Base sequence: {current_window}")
-                print(f"State: {p_state}")
+                for i in range(5):
+                    print(f"State[{i}]: {p_states[i]}")
                 print(f"Lehmer digits: {[digits[k] for k in range(p_w)]}")
                 print(f"Lehmer code: {lehmer} (valid? {lehmer < p_thresh})")
                 print(f"Lehmer code adjusted for range: {(lehmer % p_r) + p_minimum})")
