@@ -18,11 +18,15 @@ cdef inline uint64_t xorshift64_step(uint64_t x) nogil:
     return x
 
 cdef inline uint64_t rotate_left(uint64_t number, int r) nogil:
-    r &= (sizeof(uint64_t) - 1) # size will be a power of two
+    r &= 63 # because we are dealing with uint64s
     return number << r | (number >> (sizeof(uint64_t)-r))
 
 
-cdef inline uint64_t mix_arx (uint64_t s1, uint64_t s2, uint64_t s3, uint64_t s4) nogil:
+cdef inline uint64_t mix_arx (uint64_t *states) nogil:
+    s1 = states[1]
+    s2 = states[2]
+    s3 = states[3]
+    s4 = states[4]
     s1 = s1 + s2
     s4 = s4 ^ s1
     s4 = rotate_left(s4, 24)
@@ -107,12 +111,13 @@ cdef class CryptoLehmer:
 
         if not self.is_initialized:
             for i in range(self.w):
-                self.state = xorshift64_step(self.state)
-                self.window_buffer[i] = self.state
+                for j in range(1, 5):
+                    self.states[i] = xorshift64_step(self.states[i])
+                self.window_buffer[i] = mix_arx(self.states)
             self.is_initialized = 1
 
         # PINNED LOCAL VARIABLES
-        cdef uint64_t p_state = self.state
+        cdef uint64_t p_states = self.states
         cdef uint64_t p_thresh = self.thresh
         cdef uint64_t p_lehmer
         cdef uint64_t  p_minimum = self.minimum
@@ -130,8 +135,9 @@ cdef class CryptoLehmer:
 
             # generate delta new numbers using Xorshift
             for k in range(p_w - p_delta, p_w):
-                p_state = xorshift64_step(p_state)
-                p_window[k] = p_state
+                for j in range(1, 5):
+                    p_states[i] = xorshift64_step(p_states[i])
+                p_window[k] = mix_arx(p_states)
 
             lehmer = 0
             for i in range(p_w):
@@ -160,6 +166,6 @@ cdef class CryptoLehmer:
                 print("\n----------\n")
 
         # CRUCIAL, update persistent state
-        self.state = p_state
+        self.states = p_states
 
         return results
