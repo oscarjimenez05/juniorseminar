@@ -21,7 +21,13 @@ extensions = [
         ["xor_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
-    )
+    ),
+    Extension(
+        "crypto.crypto_lh",
+        ["crypto/crypto_lh.pyx"],
+        include_dirs=[numpy.get_include()],
+        extra_compile_args=c_args,
+    ),
 ]
 
 setup(
