@@ -17,34 +17,73 @@ def z3_xorshift64_step(x):
     return x
 
 
-def z3_generate_lehmer(start_seed, w):
+def z3_solve_sequence(observed_sequence, w, delta, minimum, maximum):
     """
-    Symbolically generates a single Lehmer code from a seed.
-    Matches the logic in xor_lh.pyx exactly.
+    Attacks the generator using a SEQUENCE of outputs.
+    Each new observation adds a new layer of constraints, eliminating collisions.
     """
-    state = start_seed
+    print(f"--- Setting up Z3 Solver for {len(observed_sequence)} outputs ---")
+
+    R = math.factorial(w)
+    r_range = maximum - minimum + 1
+    thresh = R - (R % r_range)
+
+    solver = Solver()
+
+    unknown_seed = BitVec('seed', 64)
+
+    current_state = unknown_seed
+
     window = []
+    for _ in range(w):
+        current_state = z3_xorshift64_step(current_state)
+        window.append(current_state)
 
     factorials = [math.factorial(w - i - 1) for i in range(w)]
 
-    # Initialize/Fill window (assuming delta=w for a fresh chunk)
-    for _ in range(w):
-        state = z3_xorshift64_step(state)
-        window.append(state)
+    for step_idx, observed_val in enumerate(observed_sequence):
 
-    # cap at 64 bits
-    lehmer_sum = BitVecVal(0, 64)
+        if step_idx > 0:
+            new_window = window[delta:]
+            for _ in range(delta):
+                current_state = z3_xorshift64_step(current_state)
+                new_window.append(current_state)
 
-    for i in range(w):
-        smaller_count = BitVecVal(0, 64)
-        for j in range(i + 1, w):
-            # uses ULT (Unsigned Less Than)
-            is_smaller = If(ULT(window[j], window[i]), BitVecVal(1, 64), BitVecVal(0, 64))
-            smaller_count += is_smaller
+            window = new_window
 
-        lehmer_sum += smaller_count * factorials[i]
+        lehmer_sum = BitVecVal(0, 64)
+        for i in range(w):
+            smaller_count = BitVecVal(0, 64)
+            for j in range(i + 1, w):
+                # uses ULT (Unsigned Less Than)
+                is_smaller = If(ULT(window[j], window[i]), BitVecVal(1, 64), BitVecVal(0, 64))
+                smaller_count += is_smaller
+            lehmer_sum += smaller_count * factorials[i]
 
-    return lehmer_sum
+        solver.add(ULT(lehmer_sum, thresh))
+        target_mod = observed_val - minimum
+        if r_range >= math.factorial(w):
+            solver.add(lehmer_sum == target_mod)
+        else:
+            solver.add(URem(lehmer_sum, r_range) == target_mod)
+
+    print("Running solver...")
+    start = time.time()
+    result = solver.check()
+    duration = time.time() - start
+
+    if result == sat:
+        print(f"BROKEN in {duration:.4f}s")
+        model = solver.model()
+        found_seed = model[unknown_seed].as_long()
+        print(f"Recovered Seed: {found_seed}")
+        return found_seed
+    else:
+        print("UNSAT")
+        print("(This might mean the sequence had a 'rejected' gap we didn't account for,")
+        print(" or the generator is secure... but for XorLehmer, it's likely a gap.)")
+        return None
+
 
 
 def real_xorshift64_step(x):
@@ -54,67 +93,55 @@ def real_xorshift64_step(x):
     return x
 
 
-def real_get_lehmer(seed, w):
-    """Generates a real observation to test the solver against."""
+def get_real_sequence(seed, w, delta, minimum, maximum, count):
+    """Generates a list of 'count' outputs from the real generator."""
     state = seed
-    window = []
-    factorials = [math.factorial(w - i - 1) for i in range(w)]
+    outputs = []
 
+    R = math.factorial(w)
+    r_range = maximum - minimum + 1
+    thresh = R - (R % r_range)
+
+    window = []
     for _ in range(w):
         state = real_xorshift64_step(state)
         window.append(state)
 
-    lehmer = 0
-    for i in range(w):
-        smaller = 0
-        for j in range(i + 1, w):
-            if window[j] < window[i]:
-                smaller += 1
-        lehmer += smaller * factorials[i]
+    while len(outputs) < count:
+        lehmer = 0
+        factorials = [math.factorial(w - i - 1) for i in range(w)]
+        for i in range(w):
+            smaller = 0
+            for j in range(i + 1, w):
+                if window[j] < window[i]:
+                    smaller += 1
+            lehmer += smaller * factorials[i]
 
-    # uint64 overflow wrapping
-    return lehmer & 0xFFFFFFFFFFFFFFFF
+        if lehmer < thresh:
+            val = (lehmer % r_range) + minimum
+            outputs.append(val)
 
+        # ideally, we should simulate the gap if a reject happens
+        # a real attack script would try assuming skip=0, then skip=1 etc.
+        new_window = window[delta:]
+        for _ in range(delta):
+            state = real_xorshift64_step(state)
+            new_window.append(state)
+        window = new_window
 
-def run_attack():
-    W_SIZE = 6
-    SECRET_SEED = 2366022249
-
-    print(f"--- Attacking XorLehmer (w={W_SIZE}) ---")
-    print(f"Target Secret Seed: {SECRET_SEED}")
-
-    observed_lehmer = real_get_lehmer(SECRET_SEED, W_SIZE)
-    print(f"Attacker observes Lehmer Code: {observed_lehmer}")
-
-    print("Building Z3 equations...")
-    solver = Solver()
-
-    unknown_seed = BitVec('seed', 64)
-
-    symbolic_output = z3_generate_lehmer(unknown_seed, W_SIZE)
-
-    solver.add(symbolic_output == observed_lehmer)
-
-    print("Running solver (this reverses the hash)...")
-    start = time.time()
-    result = solver.check()
-    duration = time.time() - start
-
-    if result == sat:
-        print(f"\n[!] BROKEN in {duration:.4f} seconds!")
-        model = solver.model()
-        found_seed = model[unknown_seed].as_long()
-        print(f"Z3 calculated seed: {found_seed}")
-
-        if found_seed == SECRET_SEED:
-            print(">> SUCCESS: Exact seed recovery.")
-        else:
-            # not a match, but state collision
-            print(">> SUCCESS: Found a valid seed collision (Pre-image attack successful).")
-            print(f"(Actual seed was {SECRET_SEED}, found valid alternative {found_seed})")
-    else:
-        print("FAILED: Could not solve. (This shouldn't happen for Xorshift)")
+    return outputs
 
 
 if __name__ == "__main__":
-    run_attack()
+    W = 6
+    DELTA = 6
+    MIN = 0
+    MAX = 719
+    SECRET = 2366022249
+    SEQ_LEN = 3  # observe SEQ_LEN nums
+
+    print(f"Secret Seed: {SECRET}")
+    sequence = get_real_sequence(SECRET, W, DELTA, MIN, MAX, SEQ_LEN)
+    print(f"Observed Sequence: {sequence}")
+
+    print(f"Z3 got sequence: {get_real_sequence(z3_solve_sequence(sequence, W, DELTA, MIN, MAX), W, DELTA, MIN, MAX, SEQ_LEN)}")
