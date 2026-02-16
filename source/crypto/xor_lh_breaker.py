@@ -3,30 +3,68 @@ import math
 from z3 import *
 
 
+# --- Decode Lehmer to Permutation Constraints ---
+def lehmer_to_permutation(lehmer_code, w):
+    """
+    Decodes a Lehmer integer into a list of indices representing the
+    relative rank of each element in the window.
+
+    Returns a list 'perm' where perm[i] is the rank of window[i].
+    Example: if window is [10, 5, 20], ranks are [1, 0, 2].
+    Meaning: window[1] < window[0] < window[2].
+    """
+    factoradic = []
+    temp_code = lehmer_code
+    for i in range(w):
+        fact = math.factorial(w - 1 - i)
+        factoradic.append(temp_code // fact)
+        temp_code %= fact
+
+    # convert factoradic to permutation (Lehmer code logic)
+    available_ranks = list(range(w))
+    ranks = [0] * w
+
+    for i in range(w):
+        # The number 'c_i' means x_i is the (c_i)-th smallest of the remaining numbers
+        pick_index = factoradic[i]
+        ranks[i] = available_ranks.pop(pick_index)
+
+    return ranks
+
+
+def generate_constraints_from_ranks(window_vars, ranks):
+    """
+    Converts ranks into Z3 strict inequality constraints.
+    If ranks are [1, 0, 2] -> window[1] < window[0] < window[2]
+    """
+    constraints = []
+
+    # invert ranks to find which index has rank 0, rank 1, etc.
+    # sorted_indices[0] is the index of the smallest element
+    # sorted_indices[1] is the index of the 2nd smallest
+    sorted_indices = [0] * len(ranks)
+    for index, rank in enumerate(ranks):
+        sorted_indices[rank] = index
+
+    # add chain constraints: smallest < 2nd Smallest < 3rd ...
+    for k in range(len(sorted_indices) - 1):
+        idx_A = sorted_indices[k]
+        idx_B = sorted_indices[k + 1]
+        constraints.append(ULT(window_vars[idx_A], window_vars[idx_B]))
+
+    return constraints
+
+
+
 def z3_xorshift64_step(x):
-    """
-    Symbolic implementation of Xorshift64.
-    x: Z3 BitVec(64)
-    """
-    # x ^= x << 13
     x = x ^ (x << 13)
-    # x ^= x >> 7
     x = x ^ LShR(x, 7)
-    # x ^= x << 17
     x = x ^ (x << 17)
     return x
 
 
-def z3_solve_sequence(observed_sequence, w, delta, minimum, maximum):
-    """
-    Attacks the generator using a SEQUENCE of outputs.
-    Each new observation adds a new layer of constraints, eliminating collisions.
-    """
-    print(f"--- Setting up Z3 Solver for {len(observed_sequence)} outputs ---")
-
-    R = math.factorial(w)
-    r_range = maximum - minimum + 1
-    thresh = R - (R % r_range)
+def z3_solve_fast(observed_sequence, w, delta, minimum, maximum):
+    print(f"--- Setting up Optimized Solver (Sequence Length: {len(observed_sequence)}) ---")
 
     solver = Solver()
 
@@ -39,10 +77,7 @@ def z3_solve_sequence(observed_sequence, w, delta, minimum, maximum):
         current_state = z3_xorshift64_step(current_state)
         window.append(current_state)
 
-    factorials = [math.factorial(w - i - 1) for i in range(w)]
-
     for step_idx, observed_val in enumerate(observed_sequence):
-
         if step_idx > 0:
             new_window = window[delta:]
             for _ in range(delta):
@@ -51,21 +86,16 @@ def z3_solve_sequence(observed_sequence, w, delta, minimum, maximum):
 
             window = new_window
 
-        lehmer_sum = BitVecVal(0, 64)
-        for i in range(w):
-            smaller_count = BitVecVal(0, 64)
-            for j in range(i + 1, w):
-                # uses ULT (Unsigned Less Than)
-                is_smaller = If(ULT(window[j], window[i]), BitVecVal(1, 64), BitVecVal(0, 64))
-                smaller_count += is_smaller
-            lehmer_sum += smaller_count * factorials[i]
+        # 2. Decode the Observation
+        # Assuming FULL RANGE observation (Lehmer code is visible)
+        # If observed_val was modulo'd, this specific optimization needs branching.
+        # But for MAX=719, this is exact.
+        lehmer_val = observed_val - minimum
 
-        solver.add(ULT(lehmer_sum, thresh))
-        target_mod = observed_val - minimum
-        if r_range >= math.factorial(w):
-            solver.add(lehmer_sum == target_mod)
-        else:
-            solver.add(URem(lehmer_sum, r_range) == target_mod)
+        ranks = lehmer_to_permutation(lehmer_val, w)
+
+        fast_constraints = generate_constraints_from_ranks(window, ranks)
+        solver.add(fast_constraints)
 
     print("Running solver...")
     start = time.time()
@@ -75,9 +105,9 @@ def z3_solve_sequence(observed_sequence, w, delta, minimum, maximum):
     if result == sat:
         print(f"BROKEN in {duration:.4f}s")
         model = solver.model()
-        found_seed = model[unknown_seed].as_long()
-        print(f"Recovered Seed: {found_seed}")
-        return found_seed
+        found = model[unknown_seed].as_long()
+        print(f"Recovered Seed: {found}")
+        return found
     else:
         print("UNSAT")
         print("(This might mean the sequence had a 'rejected' gap we didn't account for,")
@@ -94,13 +124,10 @@ def real_xorshift64_step(x):
 
 
 def get_real_sequence(seed, w, delta, minimum, maximum, count):
-    """Generates a list of 'count' outputs from the real generator."""
     state = seed
     outputs = []
 
     R = math.factorial(w)
-    r_range = maximum - minimum + 1
-    thresh = R - (R % r_range)
 
     window = []
     for _ in range(w):
@@ -117,12 +144,9 @@ def get_real_sequence(seed, w, delta, minimum, maximum, count):
                     smaller += 1
             lehmer += smaller * factorials[i]
 
-        if lehmer < thresh:
-            val = (lehmer % r_range) + minimum
-            outputs.append(val)
+        if lehmer < R:
+            outputs.append(lehmer)
 
-        # ideally, we should simulate the gap if a reject happens
-        # a real attack script would try assuming skip=0, then skip=1 etc.
         new_window = window[delta:]
         for _ in range(delta):
             state = real_xorshift64_step(state)
@@ -134,14 +158,14 @@ def get_real_sequence(seed, w, delta, minimum, maximum, count):
 
 if __name__ == "__main__":
     W = 6
-    DELTA = 6
+    DELTA = 1
     MIN = 0
     MAX = 719
-    SECRET = 2366022249
-    SEQ_LEN = 3  # observe SEQ_LEN nums
+    SECRET = 123456789123456789
+    SEQ_LEN = 7
 
     print(f"Secret Seed: {SECRET}")
     sequence = get_real_sequence(SECRET, W, DELTA, MIN, MAX, SEQ_LEN)
     print(f"Observed Sequence: {sequence}")
 
-    print(f"Z3 got sequence: {get_real_sequence(z3_solve_sequence(sequence, W, DELTA, MIN, MAX), W, DELTA, MIN, MAX, SEQ_LEN)}")
+    print(f"Z3 got sequence: {get_real_sequence(z3_solve_fast(sequence, W, DELTA, MIN, MAX), W, DELTA, MIN, MAX, SEQ_LEN)}")
