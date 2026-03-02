@@ -5,7 +5,7 @@ from stat_properties import display_arrays
 import matplotlib.pyplot as plt
 
 import c_lcg_lh, xor_lh
-from source.alternatives import lcg_fenwick, xor_fenwick
+from alternatives import lcg_fenwick, xor_fenwick
 
 
 def shannon_entropy(seq: [int]):
