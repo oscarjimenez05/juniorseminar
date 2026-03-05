@@ -1,4 +1,4 @@
-# distutils: language=c
+# distutils: language=c++
 # cython: language_level=3
 
 import numpy as np
@@ -8,11 +8,13 @@ import math
 from libc.string cimport memmove
 from libc.stdlib cimport malloc, free
 from libc.stdint cimport uint64_t
+from libcpp.random cimport mt19937_64, normal_distribution
 
 np.import_array()
 
 cdef class GaussianLehmer:
-    cdef uint64_t state
+    cdef mt19937_64 rng
+    cdef normal_distribution[double] *dist
     cdef double *window_buffer
 
     cdef uint64_t *factorials
@@ -27,7 +29,9 @@ cdef class GaussianLehmer:
 
     def __cinit__(self, uint64_t seed, int w, int delta, long long minimum, long long maximum):
         if seed == 0: seed = 123456789
-        self.state = seed
+        self.rng = mt19937_64(seed)
+        self.dist = new normal_distribution[double](0.5, 0.15)
+
         self.w = w
         self.delta = delta if delta != 0 else w
 
@@ -50,6 +54,7 @@ cdef class GaussianLehmer:
     def __dealloc__(self):
         if self.window_buffer: free(self.window_buffer)
         if self.factorials: free(self.factorials)
+        if self.dist: del self.dist
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -72,19 +77,9 @@ cdef class GaussianLehmer:
         cdef uint64_t lehmer
         cdef double sum_val, d_val
 
-        cdef uint64_t LCG_A = 6364136223846793005
-        cdef uint64_t LCG_C = 1442695040888963407
-        # Constant for 53-bit double conversion, dividing by 2^53 to get between zero and one
-        cdef double DBL_CONVERT = 1.0 / 9007199254740992.0
-
         if not self.is_initialized:
             for i in range(self.w):
-                sum_val = 0.0
-                # sum 3 uniforms to make a bell curve
-                for u in range(3):
-                    p_state = p_state * LCG_A + LCG_C
-                    sum_val += <double> (p_state >> 11) * DBL_CONVERT
-                p_window[i] = sum_val
+                p_window[i] = self.dist[0](self.rng)
             self.is_initialized = 1
 
         while count < n:
@@ -92,11 +87,7 @@ cdef class GaussianLehmer:
                 memmove(p_window, p_window + p_delta, (p_w - p_delta) * sizeof(double))
 
             for k in range(p_w - p_delta, p_w):
-                sum_val = 0.0
-                for u in range(3):
-                    p_state = p_state * LCG_A + LCG_C
-                    sum_val += <double> (p_state >> 11) * DBL_CONVERT
-                p_window[k] = sum_val
+                p_window[k] = self.dist[0](self.rng)
 
             lehmer = 0
             for i in range(p_w):
