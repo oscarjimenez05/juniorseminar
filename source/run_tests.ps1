@@ -2,7 +2,7 @@ param(
     [switch]$BigCrush = $false
 )
 
-$SEED = 2366022249
+$SEED = 12110759528222028398
 $IMAGE_NAME = "marzopa/prng-bench"
 $RESULTS_DIR = "${PWD}/results"
 
