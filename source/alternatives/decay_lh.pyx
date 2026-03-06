@@ -1,5 +1,6 @@
-# distutils: language=c
+# distutils: language=c++
 # cython: language_level=3
+from libcpp.random cimport mt19937_64, exponential_distribution
 
 import numpy as np
 cimport numpy as np
@@ -13,7 +14,8 @@ from libc.math cimport log
 np.import_array()
 
 cdef class DecayLehmer:
-    cdef uint64_t state
+    cdef mt19937_64 rng
+    cdef exponential_distribution[double] *dist
     cdef double *window_buffer
     cdef uint64_t *factorials
 
@@ -28,7 +30,10 @@ cdef class DecayLehmer:
 
     def __cinit__(self, uint64_t seed, int w, int delta, long long minimum, long long maximum):
         if seed == 0: seed = 123456789
-        self.state = seed
+        self.rng = mt19937_64(seed)
+        # lambda = 1.0
+        self.dist = new exponential_distribution[double](1.0)
+
         self.w = w
         self.delta = delta if delta != 0 else w
 
@@ -51,6 +56,7 @@ cdef class DecayLehmer:
     def __dealloc__(self):
         if self.window_buffer: free(self.window_buffer)
         if self.factorials: free(self.factorials)
+        if self.dist: del self.dist
 
     @cython.boundscheck(False)
     @cython.wraparound(False)
@@ -73,17 +79,9 @@ cdef class DecayLehmer:
         cdef uint64_t lehmer
         cdef double u_val
 
-        cdef uint64_t LCG_A = 6364136223846793005
-        cdef uint64_t LCG_C = 1442695040888963407
-        cdef double DBL_CONVERT = 1.0 / 9007199254740992.0
-
         if not self.is_initialized:
             for i in range(self.w):
-                p_state = p_state * LCG_A + LCG_C
-                u_val = <double> (p_state >> 11) * DBL_CONVERT
-                if u_val < 1e-9: u_val = 1e-9
-                # exponential decay: -ln(u)
-                p_window[i] = -log(u_val)
+                p_window[i] = self.dist[0](self.rng)
             self.is_initialized = 1
 
         while count < n:
@@ -91,11 +89,7 @@ cdef class DecayLehmer:
                 memmove(p_window, p_window + p_delta, (p_w - p_delta) * sizeof(double))
 
             for k in range(p_w - p_delta, p_w):
-                p_state = p_state * LCG_A + LCG_C
-                u_val = <double> (p_state >> 11) * DBL_CONVERT
-                if u_val < 1e-9: u_val = 1e-9
-                # exponential decay
-                p_window[k] = -log(u_val)
+                p_window[k] = self.dist[0](self.rng)
 
             lehmer = 0
             for i in range(p_w):
