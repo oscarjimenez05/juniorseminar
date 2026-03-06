@@ -28,18 +28,21 @@ extensions = [
         ["alternatives/gaussian_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
+        language="c++",
     ),
     Extension(
         "alternatives.slope_lh",
         ["alternatives/slope_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
+        language="c++",
     ),
     Extension(
         "alternatives.decay_lh",
         ["alternatives/decay_lh.pyx"],
         include_dirs=[numpy.get_include()],
         extra_compile_args=c_args,
+        language="c++",
     ),
 ]
 

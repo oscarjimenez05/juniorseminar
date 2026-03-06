@@ -62,7 +62,6 @@ cdef class GaussianLehmer:
     cpdef np.ndarray generate_chunk(self, int n, int debug):
         cdef np.ndarray[np.uint64_t, ndim=1] results = np.empty(n, dtype=np.uint64)
 
-        cdef uint64_t p_state = self.state
         cdef double *p_window = self.window_buffer
         cdef uint64_t *p_factorials = self.factorials
 
@@ -112,5 +111,4 @@ cdef class GaussianLehmer:
                 print(f"Lehmer code: {lehmer}")
                 print("\n----------\n")
 
-        self.state = p_state
         return results

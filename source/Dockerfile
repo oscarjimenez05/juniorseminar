@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
     libtestu01-0-dev \
     dieharder \
     make \
+    g++ \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir numpy cython setuptools
