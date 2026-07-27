@@ -17,7 +17,7 @@ class PermCG32:
 
 
     def generate_chunk(self, n: int, debug):
-        return self.generator.integers(0, 2**32, size=5, dtype='uint32')
+        return self.generator.integers(0, 2**32, n, dtype='uint32')
 
 
 def get_factorials(w):

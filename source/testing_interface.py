@@ -14,7 +14,7 @@ import alternatives.gaussian_lh as gau
 import alternatives.slope_lh as slp
 import alternatives.decay_lh as dec
 import alternatives.comp as comp
-import generators.PermCG32 as pcg32
+import generators
 
 maximum = 2 ** 32 - 1
 chunk_size = 8192
@@ -158,7 +158,7 @@ def main():
         case 'Hcomp':
             generator = comp.HighBitsLcg(args.seed, 0, maximum)
         case 'pcg':
-            generator = pcg32(args.seed)
+            generator = generators.PermCG32(args.seed)
 
     # -----------------------------------------------
 
